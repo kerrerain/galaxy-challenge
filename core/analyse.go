@@ -5,6 +5,6 @@ import (
 )
 
 func Analyse(universe models.Universe) (models.Response, error) {
-	response := models.Response{}
+	response := models.CreateResponse()
 	return response, nil
 }
