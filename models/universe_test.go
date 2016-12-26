@@ -36,7 +36,7 @@ func TestUpdate(t *testing.T) {
 						{OwnerID: 1}, {OwnerID: 1},
 					},
 				},
-				Stargates: map[uint16][]Stargate{},
+				Stargates: map[uint16][]*Stargate{},
 			},
 		},
 	}
@@ -66,9 +66,18 @@ func TestOpenStargate(t *testing.T) {
 			1,
 			2,
 			Universe{
-				Stargates: map[uint16][]Stargate{
-					1: []Stargate{
-						{},
+				Stargates: map[uint16][]*Stargate{
+					1: []*Stargate{
+						{
+							SourcePlanetID: 1,
+							TargetPlanetID: 2,
+						},
+					},
+					2: []*Stargate{
+						{
+							SourcePlanetID: 1,
+							TargetPlanetID: 2,
+						},
 					},
 				},
 			},

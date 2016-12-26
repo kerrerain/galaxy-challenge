@@ -1,9 +1,13 @@
 package models
 
+import (
+	"log"
+)
+
 type Universe struct {
 	Planets   map[uint16][]Planet
 	Fleets    map[uint16][]Fleet
-	Stargates map[uint16][]Stargate
+	Stargates map[uint16][]*Stargate
 }
 
 func (u *Universe) Update(request Request) {
@@ -40,15 +44,22 @@ func (u *Universe) UpdateFleets(fleets []Fleet) {
 }
 
 func (u *Universe) OpenStargate(sourcePlanetID uint16, targetPlanetID uint16) {
+	log.Println("Opening a stargate from", sourcePlanetID, "to", targetPlanetID)
+
 	if u.Stargates[sourcePlanetID] == nil {
-		u.Stargates[sourcePlanetID] = make([]Stargate, 0)
+		u.Stargates[sourcePlanetID] = make([]*Stargate, 0)
 	}
 
-	u.Stargates[sourcePlanetID] = append(u.Stargates[sourcePlanetID], Stargate{})
+	stargate := &Stargate{
+		SourcePlanetID: sourcePlanetID,
+		TargetPlanetID: targetPlanetID,
+	}
+
+	u.Stargates[sourcePlanetID] = append(u.Stargates[sourcePlanetID], stargate)
 }
 
 func CreateNewUniverse() Universe {
 	return Universe{
-		Stargates: make(map[uint16][]Stargate),
+		Stargates: make(map[uint16][]*Stargate),
 	}
 }
