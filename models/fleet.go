@@ -1,7 +1,7 @@
 package models
 
 type Fleet struct {
-	Owner    uint16 `json:"owner,omitempty"`
+	OwnerID  uint16 `json:"owner,omitempty"`
 	Units    uint16 `json:"units,omitempty"`
 	SourceID uint16 `json:"from,omitempty"`
 	TargetID uint16 `json:"to,omitempty"`

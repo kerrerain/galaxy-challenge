@@ -10,3 +10,19 @@ type Planet struct {
 	Growth   uint16  `json:"gr,omitempty"`
 	Category string  `json:"class,omitempty"`
 }
+
+func (p Planet) Habitable() bool {
+	return p.Category != "D" &&
+		p.Category != "J" &&
+		p.Category != "N"
+}
+
+func FilterPlanets(toFilter []Planet, predicate func(Planet) bool) []Planet {
+	filtered := make([]Planet, 0)
+	for _, planet := range toFilter {
+		if predicate(planet) {
+			filtered = append(filtered, planet)
+		}
+	}
+	return filtered
+}
