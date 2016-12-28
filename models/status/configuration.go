@@ -1,4 +1,4 @@
-package models
+package status
 
 type Configuration struct {
 	Turn    uint16 `json:"turn,omitempty"`

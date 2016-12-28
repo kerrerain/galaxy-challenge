@@ -1,6 +1,6 @@
-package models
+package status
 
-type Request struct {
+type Game struct {
 	Planets []Planet      `json:"planets,omitempty"`
 	Fleets  []Fleet       `json:"fleets,omitempty"`
 	Config  Configuration `json:"config,omitempty"`

@@ -1,4 +1,4 @@
-package models
+package status
 
 type Fleet struct {
 	OwnerID  uint16 `json:"owner,omitempty"`

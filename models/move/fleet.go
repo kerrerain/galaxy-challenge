@@ -1,6 +1,6 @@
-package models
+package move
 
-type EngagingFleet struct {
+type Fleet struct {
 	Units    uint16 `json:"units,omitempty"`
 	SourceID uint16 `json:"source,omitempty"`
 	TargetID uint16 `json:"target,omitempty"`

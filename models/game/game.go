@@ -1,16 +1,37 @@
-package models
+package game
 
 import (
-	"log"
+	"github.com/magleff/galaxy-challenge/models/status"
 )
 
-type Universe struct {
-	Planets   map[uint16][]Planet
-	Fleets    map[uint16][]Fleet
-	Stargates map[uint16][]*Stargate
+type Game struct {
+	Planets     []*Planet
+	PlanetsByID map[uint16]*Planet
+	Fleets      []status.Fleet
+	Turn        uint16
+	MaxTurn     uint16
+	Initialized bool
 }
 
-func (u *Universe) Update(request Request) {
+func (g *Game) InitPlanet(planet *Planet) {
+	g.Planets = append(g.Planets, planet)
+	g.PlanetsByID[planet.ID] = planet
+}
+
+func (g *Game) InitializeDistances() {
+	for _, planet := range g.Planets {
+		planet.InitializeDistances(g.Planets)
+	}
+}
+
+func CreateNewGame() *Game {
+	return &Game{
+		Planets:     make([]*Planet, 0),
+		PlanetsByID: make(map[uint16]*Planet),
+	}
+}
+
+/*func (u *Universe) Update(request Request) {
 	u.UpdatePlanets(request.Planets)
 	u.UpdateFleets(request.Fleets)
 }
@@ -56,10 +77,4 @@ func (u *Universe) OpenStargate(sourcePlanetID uint16, targetPlanetID uint16) {
 	}
 
 	u.Stargates[sourcePlanetID] = append(u.Stargates[sourcePlanetID], stargate)
-}
-
-func CreateNewUniverse() Universe {
-	return Universe{
-		Stargates: make(map[uint16][]*Stargate),
-	}
-}
+}*/

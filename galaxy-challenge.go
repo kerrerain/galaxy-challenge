@@ -2,54 +2,59 @@ package main
 
 import (
 	"encoding/json"
-	"github.com/magleff/galaxy-challenge/base"
-	"github.com/magleff/galaxy-challenge/models"
+	"github.com/magleff/galaxy-challenge/core"
+	"github.com/magleff/galaxy-challenge/models/game"
+	"github.com/magleff/galaxy-challenge/models/move"
+	"github.com/magleff/galaxy-challenge/models/status"
 	"log"
 	"net/http"
 )
 
-var game models.Game
+var G *game.Game
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	var (
-		err      error
-		request  models.Request
-		response models.Response
+		err    error
+		status status.Game
+		move   move.Move
 	)
 
-	if err = json.NewDecoder(r.Body).Decode(&request); err != nil {
+	if err = json.NewDecoder(r.Body).Decode(&status); err != nil {
 		log.Println("An error occured while decoding json:", err)
 	} else {
-		log.Println("Message received for turn", request.Config.Turn)
+		log.Println("Message received for turn", status.Config.Turn)
 	}
 
-	identifyGame(request)
-
-	response, err = base.Analyse(game)
+	move, err = makeMove(status)
 
 	if err != nil {
 		log.Println("An error occured while analysing the current state of the game:", err)
 	} else {
-		log.Println("Sending back data for turn", request.Config.Turn)
+		log.Println("Sending back data for turn", status.Config.Turn)
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
+	json.NewEncoder(w).Encode(move)
 }
 
 func main() {
 	log.Println("Running the server on port 3000")
 
-	game = models.CreateNewGame()
+	G = game.CreateNewGame()
 
 	http.HandleFunc("/", handler)
 	http.ListenAndServe(":3000", nil)
 }
 
-func identifyGame(request models.Request) {
-	if request.Config.Turn > game.Turn {
-		game.Update(request)
+func makeMove(status status.Game) (move.Move, error) {
+	updateGame(status)
+	return core.MakeMove(G)
+}
+
+func updateGame(status status.Game) {
+	if status.Config.Turn > G.Turn {
+		core.UpdateGame(status, G)
 	} else {
-		game = models.CreateNewGame()
+		G = game.CreateNewGame()
 	}
 }
