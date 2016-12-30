@@ -4,13 +4,31 @@ import (
 	"github.com/magleff/galaxy-challenge/globals"
 	"github.com/magleff/galaxy-challenge/models/game"
 	"github.com/magleff/galaxy-challenge/models/move"
+	"log"
 	"sort"
 )
 
-func SimulateSimple(g *game.Game) move.Move {
-	// Full attack (full attack from a combination of the closest planets)
-	// Reasonable attack (only 50% of the forces spent)
-	// Full defense (focusing on defending planets under attack)
+type SimulatedMove struct {
+	Move  *move.Move
+	Depth int
+}
+
+func SimulateSimple(g *game.Game) *move.Move {
+	simulatedMove := &SimulatedMove{
+		Move:  move.CreateMove(),
+		Depth: 0,
+	}
+
+	fullAttackSimulation(simulatedMove, g)
+
+	return simulatedMove.Move
+}
+
+// Full attack (full attack from a combination of the closest planets)
+// Reasonable attack (only 50% of the forces spent)
+// Full defense (focusing on defending planets under attack)
+func fullAttackSimulation(simulatedMove *SimulatedMove, g *game.Game) {
+	simulatedMove.Depth = simulatedMove.Depth + 1
 	fullAttackSimulations := make([]SimpleSimulation, 0)
 
 	for _, planet := range g.Planets {
@@ -19,12 +37,28 @@ func SimulateSimple(g *game.Game) move.Move {
 
 	sort.Sort(ByGreatestFinalScore(fullAttackSimulations))
 
-	// TODO sort by score
-	if len(fullAttackSimulations) > 0 {
-		return fullAttackSimulations[0].Move
+	if len(fullAttackSimulations) > 0 &&
+		len(fullAttackSimulations[0].Move.Fleets) > 0 &&
+		simulatedMove.Depth < globals.MAX_DEPTH {
+
+		removeUnitsFromSourcePlanets(g, fullAttackSimulations[0].Move)
+		//
+		addMoveToGlobalMove(simulatedMove.Move, fullAttackSimulations[0].Move)
+		// Recursive until there is no more fleet sent
+		fullAttackSimulation(simulatedMove, g)
 	} else {
-		return move.CreateMove()
+		log.Println("Depth", simulatedMove.Depth)
 	}
+}
+
+func removeUnitsFromSourcePlanets(g *game.Game, futureMove move.Move) {
+	for _, fleet := range futureMove.Fleets {
+		g.PlanetsByID[fleet.SourceID].Units = g.PlanetsByID[fleet.SourceID].Units - fleet.Units
+	}
+}
+
+func addMoveToGlobalMove(globalMove *move.Move, fullAttackMove move.Move) {
+	globalMove.Fleets = append(globalMove.Fleets, fullAttackMove.Fleets...)
 }
 
 func simulateFullAttackOnPlanet(planet *game.Planet, g *game.Game) SimpleSimulation {
@@ -56,7 +90,7 @@ func initPlanetsFuture(planets []*game.Planet) []*PlanetFuture {
 }
 
 func CreateFutureMove(targetPlanet *game.Planet) move.Move {
-	futureMove := move.CreateMove()
+	futureMove := *move.CreateMove()
 	unitsNeeded := targetPlanet.Units + 1
 
 	// Take all available units from nearby planets

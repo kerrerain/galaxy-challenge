@@ -16,7 +16,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	var (
 		err    error
 		status status.Game
-		move   move.Move
+		move   *move.Move
 	)
 
 	if err = json.NewDecoder(r.Body).Decode(&status); err != nil {
@@ -27,6 +27,8 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 	move, err = makeMove(status)
 
+	log.Println(len(move.Fleets), "fleets sent.")
+
 	if err != nil {
 		log.Println("An error occured while analysing the current state of the game:", err)
 	} else {
@@ -34,7 +36,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(move)
+	json.NewEncoder(w).Encode(*move)
 }
 
 func main() {
@@ -46,7 +48,7 @@ func main() {
 	http.ListenAndServe(":3000", nil)
 }
 
-func makeMove(status status.Game) (move.Move, error) {
+func makeMove(status status.Game) (*move.Move, error) {
 	updateGame(status)
 	return core.MakeMove(G)
 }

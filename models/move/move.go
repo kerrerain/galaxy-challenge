@@ -5,8 +5,8 @@ type Move struct {
 	Terraformings []Terraforming `json:"terraformings"`
 }
 
-func CreateMove() Move {
-	return Move{
+func CreateMove() *Move {
+	return &Move{
 		Fleets:        []Fleet{},
 		Terraformings: []Terraforming{},
 	}
