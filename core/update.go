@@ -35,4 +35,5 @@ func updatePlanets(planets []status.Planet, g *game.Game) {
 	for _, planet := range planets {
 		mappers.UpdateGamePlanet(g.PlanetsByID[planet.ID], planet)
 	}
+	g.UpdatePlanetsByOwnerID()
 }

@@ -10,9 +10,9 @@ type Planet struct {
 	X               float64
 	Y               float64
 	OwnerID         uint16
-	Units           uint16
-	MaxUnits        uint16
-	Growth          uint16
+	Units           int16
+	MaxUnits        int16
+	Growth          int16
 	Category        string
 	Distances       map[uint16]*Distance
 	DistancesSorted []*Distance
@@ -44,6 +44,21 @@ func (p *Planet) InitializeDistances(planets []*Planet) {
 	// Asc
 	sort.Sort(ByDistance(distancesToSort))
 	p.DistancesSorted = distancesToSort
+}
+
+func (p Planet) Copy() *Planet {
+	return &Planet{
+		ID:              p.ID,
+		X:               p.X,
+		Y:               p.Y,
+		OwnerID:         p.OwnerID,
+		Units:           p.Units,
+		MaxUnits:        p.MaxUnits,
+		Growth:          p.Growth,
+		Category:        p.Category,
+		Distances:       p.Distances,
+		DistancesSorted: p.DistancesSorted,
+	}
 }
 
 func FilterPlanets(toFilter []Planet, predicate func(Planet) bool) []Planet {
