@@ -1,6 +1,6 @@
 package main
 
-import (
+/*import (
 	"encoding/json"
 	"github.com/magleff/galaxy-challenge/core"
 	"github.com/magleff/galaxy-challenge/models/game"
@@ -59,4 +59,4 @@ func updateGame(status status.Game) {
 	} else {
 		G = game.CreateNewGame()
 	}
-}
+}*/

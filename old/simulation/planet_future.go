@@ -45,7 +45,7 @@ func (p *PlanetFuture) SimulateFleetsArrivals(time int) {
 		for _, arrival := range fleetsArrivals {
 			p.Units = p.Units - arrival.Units
 
-			if p.Units <= 0 {
+			if p.Units < 0 {
 				p.OwnerID = arrival.OwnerID // The other player has earned the planet
 				p.Units = -1 * p.Units
 			}

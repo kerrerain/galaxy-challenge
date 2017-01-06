@@ -37,6 +37,10 @@ func fullAttackSimulation(simulatedMove *SimulatedMove, g *game.Game) {
 
 	sort.Sort(ByGreatestFinalScore(fullAttackSimulations))
 
+	if len(fullAttackSimulations) > 0 {
+		log.Println("Best move", fullAttackSimulations[0].FinalScore, fullAttackSimulations[0].Move)
+	}
+
 	if len(fullAttackSimulations) > 0 &&
 		len(fullAttackSimulations[0].Move.Fleets) > 0 &&
 		simulatedMove.Depth < globals.MAX_DEPTH {

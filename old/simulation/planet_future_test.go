@@ -58,19 +58,22 @@ func TestGrow(t *testing.T) {
 func TestSimulateFleetsArrivals(t *testing.T) {
 	// Arrange
 	var testCases = []struct {
-		Input    *PlanetFuture
-		Expected int16
+		Input           *PlanetFuture
+		ExpectedUnits   int16
+		ExpectedOwnerID uint16
 	}{
 		{
 			Input: &PlanetFuture{
-				Units: 10,
+				Units:   10,
+				OwnerID: 2,
 				FleetsArrivals: map[int][]status.Fleet{
 					1: []status.Fleet{
-						{Units: 20},
+						{Units: 20, OwnerID: 1},
 					},
 				},
 			},
-			Expected: -10,
+			ExpectedUnits:   10,
+			ExpectedOwnerID: 1,
 		},
 	}
 
@@ -82,8 +85,12 @@ func TestSimulateFleetsArrivals(t *testing.T) {
 		planetFuture.SimulateFleetsArrivals(1)
 
 		// Assert
-		if planetFuture.Units != testCase.Expected {
-			t.Errorf("TestRun(%d): expected %s, actual %s", index, testCase.Expected, planetFuture.Units)
+		if planetFuture.Units != testCase.ExpectedUnits {
+			t.Errorf("TestRun(%d): expected %s, actual %s", index, testCase.ExpectedUnits, planetFuture.Units)
+		}
+
+		if planetFuture.OwnerID != testCase.ExpectedOwnerID {
+			t.Errorf("TestRun(%d): expected %s, actual %s", index, testCase.ExpectedOwnerID, planetFuture.OwnerID)
 		}
 	}
 }
