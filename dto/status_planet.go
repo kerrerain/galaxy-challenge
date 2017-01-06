@@ -10,3 +10,16 @@ type StatusPlanet struct {
 	Growth   int16   `json:"gr,omitempty"`
 	Category string  `json:"class,omitempty"`
 }
+
+func (p StatusPlanet) Copy() StatusPlanet {
+	return StatusPlanet{
+		ID:       p.ID,
+		X:        p.X,
+		Y:        p.Y,
+		OwnerID:  p.OwnerID,
+		Units:    p.Units,
+		MaxUnits: p.MaxUnits,
+		Growth:   p.Growth,
+		Category: p.Category,
+	}
+}
