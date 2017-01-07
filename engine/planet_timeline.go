@@ -6,7 +6,15 @@ import (
 )
 
 type PlanetTimeline struct {
+	ID    uint16
 	Turns []dto.StatusPlanet
+}
+
+func CreatePlanetTimeline(planet dto.StatusPlanet) *PlanetTimeline {
+	return &PlanetTimeline{
+		ID:    planet.ID,
+		Turns: []dto.StatusPlanet{planet},
+	}
 }
 
 func (p *PlanetTimeline) NextTurn(fleets []dto.StatusFleet) {
@@ -33,11 +41,5 @@ func applyFleets(planet *dto.StatusPlanet, fleets []dto.StatusFleet) {
 			planet.OwnerID = fleet.OwnerID // The other player has earned the planet
 			planet.Units = -1 * planet.Units
 		}
-	}
-}
-
-func CreatePlanetTimeline(planet dto.StatusPlanet) *PlanetTimeline {
-	return &PlanetTimeline{
-		Turns: []dto.StatusPlanet{planet},
 	}
 }

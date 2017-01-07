@@ -21,7 +21,6 @@ func TestCreatePlanetTimeline(t *testing.T) {
 
 func TestNextTurn(t *testing.T) {
 	// Arrange
-	// Arrange
 	var testCases = []struct {
 		Input           *PlanetTimeline
 		InputFleets     []dto.StatusFleet
