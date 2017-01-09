@@ -23,3 +23,13 @@ func (p StatusPlanet) Copy() StatusPlanet {
 		Category: p.Category,
 	}
 }
+
+func FilterStatusPlanets(toFilter []StatusPlanet, predicate func(StatusPlanet) bool) []StatusPlanet {
+	filtered := make([]StatusPlanet, 0)
+	for _, planet := range toFilter {
+		if predicate(planet) {
+			filtered = append(filtered, planet)
+		}
+	}
+	return filtered
+}

@@ -1,22 +1,21 @@
 package main
 
-/*import (
+import (
 	"encoding/json"
-	"github.com/magleff/galaxy-challenge/core"
-	"github.com/magleff/galaxy-challenge/models/game"
-	"github.com/magleff/galaxy-challenge/models/move"
-	"github.com/magleff/galaxy-challenge/models/status"
+	"github.com/magleff/galaxy-challenge/dto"
+	"github.com/magleff/galaxy-challenge/game"
+	"github.com/magleff/galaxy-challenge/ias/paimon"
 	"log"
 	"net/http"
 )
 
-var G *game.Game
+var G *game.Map
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	var (
 		err    error
-		status status.Game
-		move   *move.Move
+		status dto.Status
+		move   dto.Move
 	)
 
 	if err = json.NewDecoder(r.Body).Decode(&status); err != nil {
@@ -27,8 +26,6 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 	move, err = makeMove(status)
 
-	log.Println(len(move.Fleets), "fleets sent.")
-
 	if err != nil {
 		log.Println("An error occured while analysing the current state of the game:", err)
 	} else {
@@ -36,27 +33,27 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(*move)
+	json.NewEncoder(w).Encode(move)
 }
 
 func main() {
 	log.Println("Running the server on port 3000")
 
-	G = game.CreateNewGame()
+	G = &game.Map{}
 
 	http.HandleFunc("/", handler)
 	http.ListenAndServe(":3000", nil)
 }
 
-func makeMove(status status.Game) (*move.Move, error) {
+func makeMove(status dto.Status) (dto.Move, error) {
 	updateGame(status)
-	return core.MakeMove(G)
+	return paimon.ComputeMove(G), nil
 }
 
-func updateGame(status status.Game) {
+func updateGame(status dto.Status) {
 	if status.Config.Turn > G.Turn {
-		core.UpdateGame(status, G)
+		G.Update(status)
 	} else {
-		G = game.CreateNewGame()
+		G = &game.Map{}
 	}
-}*/
+}

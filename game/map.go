@@ -10,6 +10,8 @@ type Map struct {
 	Planets     []dto.StatusPlanet
 	Fleets      []dto.StatusFleet
 	DistanceMap map[uint16]map[uint16]float64
+	Turn        uint16
+	Initialized bool
 }
 
 func (m *Map) InitDistanceMap() error {
@@ -29,6 +31,7 @@ func (m *Map) InitDistanceMap() error {
 func (m *Map) Update(status dto.Status) {
 	m.Planets = status.Planets
 	m.Fleets = status.Fleets
+	m.Turn = status.Config.Turn
 }
 
 func initDistanceMapForPlanet(planet dto.StatusPlanet, otherPlanets []dto.StatusPlanet) map[uint16]float64 {
