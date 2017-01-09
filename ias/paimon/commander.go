@@ -38,7 +38,10 @@ func (c *Commander) planetInvasion(targetPlanet dto.StatusPlanet) []dto.MoveFlee
 	for _, distance := range distancesFromSourcePlanets {
 		possibleUnits := c.possibleUnits(unitsNeeded, distance.Planet)
 
-		if unitsNeeded > 0 && possibleUnits > 3 {
+		if distance.Planet.ID != targetPlanet.ID &&
+			unitsNeeded > 0 &&
+			possibleUnits > 3 {
+
 			fleets = append(fleets, dto.MoveFleet{
 				SourceID: distance.Planet.ID,
 				TargetID: targetPlanet.ID,
