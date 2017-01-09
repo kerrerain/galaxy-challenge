@@ -18,7 +18,7 @@ func evaluate(gameMap *game.Map) []*PlanetEvaluation {
 	for _, otherPlanet := range gameMap.Planets {
 		result = append(result, &PlanetEvaluation{
 			Planet: otherPlanet,
-			Score:  evaluateDistance(gameMap, ownPlanets, otherPlanet),
+			Score:  evaluateBasicStatus(otherPlanet) + evaluateDistance(gameMap, ownPlanets, otherPlanet),
 		})
 	}
 
