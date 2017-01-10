@@ -55,5 +55,7 @@ func updateGame(status dto.Status) {
 		G.Update(status)
 	} else {
 		G = &game.Map{}
+		G.Update(status)
+		G.InitDistanceMap()
 	}
 }

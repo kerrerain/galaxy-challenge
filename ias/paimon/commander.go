@@ -76,5 +76,5 @@ func (c *Commander) distancesFromSourcePlanets(targetPlanet dto.StatusPlanet) []
 }
 
 func (c *Commander) possibleUnits(unitsNeeded int16, planet dto.StatusPlanet) int16 {
-	return common.Max(0, common.Min(planet.Units-c.UnitsAlreadySentForPlanet[planet.ID]-5, unitsNeeded))
+	return common.Max(0, common.Min(planet.Units-c.UnitsAlreadySentForPlanet[planet.ID]-20, unitsNeeded))
 }

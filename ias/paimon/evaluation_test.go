@@ -3,10 +3,11 @@ package paimon
 import (
 	"github.com/magleff/galaxy-challenge/common"
 	"github.com/magleff/galaxy-challenge/dto"
+	"github.com/magleff/galaxy-challenge/game"
 	"testing"
 )
 
-func TestEvaluateBasicStatus(t *testing.T) {
+func TestEvaluationBasicStatus(t *testing.T) {
 	// Arrange
 	planets := []dto.StatusPlanet{
 		// The planet is owned by the player. Without further analysis,
@@ -46,7 +47,6 @@ func TestEvaluateBasicStatus(t *testing.T) {
 		},
 	}
 
-	// Act
 	lastScore := 0
 
 	for index, planet := range planets {
@@ -59,5 +59,50 @@ func TestEvaluateBasicStatus(t *testing.T) {
 		}
 
 		lastScore = score
+	}
+}
+
+func TestEvaluateDistance(t *testing.T) {
+	// Arrange
+	planets := []dto.StatusPlanet{
+		dto.StatusPlanet{
+			ID:      1,
+			OwnerID: common.PLAYER_OWNER_ID,
+			X:       0,
+			Y:       0,
+		},
+		dto.StatusPlanet{
+			ID:      2,
+			OwnerID: 2,
+			X:       1,
+			Y:       0,
+		},
+		dto.StatusPlanet{
+			ID:      3,
+			OwnerID: common.NEUTRAL_OWNER_ID,
+			X:       3,
+			Y:       0,
+		},
+		dto.StatusPlanet{
+			ID:      4,
+			OwnerID: common.NEUTRAL_OWNER_ID,
+			X:       5,
+			Y:       0,
+		},
+	}
+
+	gameMap := &game.Map{
+		Planets: planets,
+	}
+	gameMap.InitDistanceMap()
+
+	evaluation := CreateEvaluation(gameMap)
+
+	// Act
+	score := evaluation.evaluateDistance(planets[2])
+
+	// Assert
+	if score != 300 {
+		t.Errorf("TestEvaluateDistance: expected %d but was %d", 300, score)
 	}
 }

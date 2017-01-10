@@ -11,8 +11,8 @@ import (
 // without analyzing accurately the consequences.
 //
 func ComputeMove(gameMap *game.Map) dto.Move {
-	planetEvaluations := evaluate(gameMap)
+	evaluation := CreateEvaluation(gameMap)
 	commander := CreateCommander(gameMap)
 
-	return commander.PlanInvasion(planetEvaluations)
+	return commander.PlanInvasion(evaluation.Run())
 }
