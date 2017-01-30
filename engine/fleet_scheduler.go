@@ -9,20 +9,26 @@ type FleetScheduler struct {
 	FleetArrivals map[string][]dto.StatusFleet
 }
 
+func CreateFleetScheduler(fleets []dto.StatusFleet) *FleetScheduler {
+	return &FleetScheduler{
+		FleetArrivals: initFleets(fleets),
+	}
+}
+
+// Returns the fleets landing on a planet at a specific turn (0, 1, etc).
 func (f FleetScheduler) TurnFleetsForPlanet(turn int, planetID uint16) []dto.StatusFleet {
 	return f.FleetArrivals[computeKey(turn, int(planetID))]
 }
 
 func (f *FleetScheduler) AddFleets(fleets []dto.StatusFleet) {
 	for _, fleet := range fleets {
-		addFleetArrival(f.FleetArrivals, fleet)
+		AddFleet(fleet)
 	}
 }
 
-func CreateFleetScheduler(fleets []dto.StatusFleet) *FleetScheduler {
-	return &FleetScheduler{
-		FleetArrivals: initFleets(fleets),
-	}
+// Schedules a single fleet, using the "Left" parameter to know when it will land on a planet.
+func (f *FleetScheduler) AddFleet(fleet dto.StatusFleet) {
+	addFleetArrival(f.FleetArrivals, fleet)
 }
 
 func initFleets(fleets []dto.StatusFleet) map[string][]dto.StatusFleet {

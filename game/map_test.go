@@ -80,3 +80,36 @@ func TestUpdateMap(t *testing.T) {
 		t.Errorf("There should be %d planets after update.", len(status.Fleets))
 	}
 }
+
+func TestComputeTurnsLeft(t *testing.T) {
+	// Arrange
+	gameMap := &Map{
+		Planets: []dto.StatusPlanet{
+			{ID: 1, X: 0, Y: 0},
+			{ID: 2, X: 40, Y: 0},
+			{ID: 3, X: 45, Y: 0},
+		},
+	}
+
+	gameMap.InitDistanceMap()
+
+	testCases := []struct {
+		SourceID uint16
+		TargetID uint16
+		Expected uint16
+	}{
+		{1, 2, 2},
+		{1, 3, 2},
+		{2, 3, 0},
+	}
+
+	for index, testCase := range testCases {
+		// Act
+		actual := gameMap.computeTurnsLeft(testCase.SourceID, testCase.TargetID)
+
+		// Assert
+		if actual != testCase.Expected {
+			t.Errorf("TestComputeTurnsLeft(%d): expected %d, was %d", index, testCase.Expected, actual)
+		}
+	}
+}

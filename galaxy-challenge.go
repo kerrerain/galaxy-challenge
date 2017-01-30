@@ -47,7 +47,7 @@ func main() {
 
 func makeMove(status dto.Status) (dto.Move, error) {
 	updateGame(status)
-	return paimon.ComputeMove(G), nil
+	return paimon.Run(G), nil
 }
 
 func updateGame(status dto.Status) {

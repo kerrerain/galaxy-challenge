@@ -2,6 +2,7 @@ package game
 
 import (
 	"errors"
+	"github.com/magleff/galaxy-challenge/common"
 	"github.com/magleff/galaxy-challenge/dto"
 	"math"
 )
@@ -32,6 +33,20 @@ func (m *Map) Update(status dto.Status) {
 	m.Planets = status.Planets
 	m.Fleets = status.Fleets
 	m.Turn = status.Config.Turn
+}
+
+func (m Map) MapMoveFleet(playerID uint16, moveFleet dto.MoveFleet) dto.StatusFleet {
+	return dto.StatusFleet{
+		OwnerID:  playerID,
+		SourceID: moveFleet.SourceID,
+		TargetID: moveFleet.TargetID,
+		Units:    moveFleet.Units,
+		Left:     m.computeTurnsLeft(moveFleet.SourceID, moveFleet.TargetID),
+	}
+}
+
+func (m Map) computeTurnsLeft(sourceID uint16, targetID uint16) uint16 {
+	return uint16(math.Floor(m.DistanceMap[sourceID][targetID] / common.DISTANCE_PER_TURN))
 }
 
 func initDistanceMapForPlanet(planet dto.StatusPlanet, otherPlanets []dto.StatusPlanet) map[uint16]float64 {

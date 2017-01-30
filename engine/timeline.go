@@ -6,9 +6,18 @@ import (
 )
 
 type Timeline struct {
+	GameMap         *game.Map
 	PlanetTimelines []*PlanetTimeline
 	FleetScheduler  *FleetScheduler
 	Turn            int
+}
+
+func CreateTimeline(gameMap *game.Map) Timeline {
+	return Timeline{
+		GameMap:         gameMap,
+		PlanetTimelines: CreatePlanetTimelines(gameMap.Planets),
+		FleetScheduler:  CreateFleetScheduler(gameMap.Fleets),
+	}
 }
 
 func (t *Timeline) NextTurn() {
@@ -20,19 +29,8 @@ func (t *Timeline) NextTurn() {
 	}
 }
 
-func CreateTimeline(gameMap *game.Map) Timeline {
-	return Timeline{
-		PlanetTimelines: initPlanetTimelines(gameMap.Planets),
-		FleetScheduler:  CreateFleetScheduler(gameMap.Fleets),
+func (t *Timeline) ScheduleMoveForNextTurn(playerID uint16, move dto.Move) {
+	for _, fleet := range move.Fleets {
+		t.FleetScheduler.AddFleet(t.GameMap.MapMoveFleet(playerID, fleet))
 	}
-}
-
-func initPlanetTimelines(planets []dto.StatusPlanet) []*PlanetTimeline {
-	planetTimelines := make([]*PlanetTimeline, len(planets))
-
-	for index, planet := range planets {
-		planetTimelines[index] = CreatePlanetTimeline(planet)
-	}
-
-	return planetTimelines
 }
