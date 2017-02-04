@@ -6,14 +6,16 @@ import (
 )
 
 type PlanetTimeline struct {
-	ID    uint16
-	Turns []dto.StatusPlanet
+	ID     uint16
+	Turns  []dto.StatusPlanet
+	Origin *dto.StatusPlanet
 }
 
 func CreatePlanetTimeline(planet dto.StatusPlanet) *PlanetTimeline {
 	return &PlanetTimeline{
-		ID:    planet.ID,
-		Turns: []dto.StatusPlanet{planet},
+		ID:     planet.ID,
+		Turns:  []dto.StatusPlanet{planet},
+		Origin: &planet,
 	}
 }
 
@@ -35,22 +37,6 @@ func (p *PlanetTimeline) NextTurn(fleets []dto.StatusFleet) {
 	applyFleets(&nextTurnPlanet, fleets)
 
 	p.Turns = append(p.Turns, nextTurnPlanet)
-}
-
-// The ownership tells how much a planet is owned by the player at the end of the turns.
-// Negative values means that an enemy owns the planet.
-func (p PlanetTimeline) Ownership() int {
-	if len(p.Turns) == 0 {
-		return 0
-	}
-
-	lastTurn := p.Turns[len(p.Turns)-1]
-
-	if lastTurn.OwnerID != common.PLAYER_OWNER_ID {
-		return -1 * int(lastTurn.Units)
-	} else {
-		return int(lastTurn.Units)
-	}
 }
 
 func applyGrowth(planet *dto.StatusPlanet) {

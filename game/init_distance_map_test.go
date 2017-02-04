@@ -2,6 +2,7 @@ package game
 
 import (
 	"github.com/magleff/galaxy-challenge/dto"
+	"reflect"
 	"testing"
 )
 
@@ -24,7 +25,7 @@ func TestInitDistanceMap(t *testing.T) {
 		Input             []dto.StatusPlanet
 		InputSourcePlanet uint16
 		InputTargetPlanet uint16
-		ExpectedDistance  float64
+		Expected          Distance
 	}{
 		{
 			[]dto.StatusPlanet{
@@ -32,7 +33,10 @@ func TestInitDistanceMap(t *testing.T) {
 				{ID: 2, X: 15, Y: 0},
 				{ID: 3, X: 5, Y: 0},
 			},
-			1, 3, 5,
+			1, 3, Distance{
+				Raw:   5,
+				Turns: 0,
+			},
 		},
 	}
 
@@ -46,38 +50,12 @@ func TestInitDistanceMap(t *testing.T) {
 		gameMap.InitDistanceMap()
 
 		// Assert
-		distance := gameMap.DistanceMap[testCase.InputSourcePlanet][testCase.InputTargetPlanet]
+		actual := gameMap.DistanceMap[testCase.InputSourcePlanet][testCase.InputTargetPlanet]
 
-		if testCase.ExpectedDistance != distance {
-			t.Errorf("TestInitDistanceMap(%d): expected %s, actual %s", index,
-				testCase.ExpectedDistance, distance)
+		if !reflect.DeepEqual(testCase.Expected, actual) {
+			t.Errorf("TestInitDistanceMap(%d): expected %s, was %s", index,
+				testCase.Expected, actual)
 		}
-	}
-}
-
-func TestUpdateMap(t *testing.T) {
-	// Arrange
-	gameMap := &Map{}
-
-	status := dto.Status{
-		Planets: []dto.StatusPlanet{
-			{}, {},
-		},
-		Fleets: []dto.StatusFleet{
-			{}, {}, {},
-		},
-	}
-
-	// Act
-	gameMap.Update(status)
-
-	// Assert
-	if len(gameMap.Planets) != len(status.Planets) {
-		t.Errorf("There should be %d planets after update.", len(status.Planets))
-	}
-
-	if len(gameMap.Fleets) != len(status.Fleets) {
-		t.Errorf("There should be %d planets after update.", len(status.Fleets))
 	}
 }
 
@@ -94,18 +72,17 @@ func TestComputeTurnsLeft(t *testing.T) {
 	gameMap.InitDistanceMap()
 
 	testCases := []struct {
-		SourceID uint16
-		TargetID uint16
-		Expected uint16
+		rawDistance float64
+		Expected    uint16
 	}{
-		{1, 2, 2},
-		{1, 3, 2},
-		{2, 3, 0},
+		{40, 2},
+		{45, 2},
+		{5, 0},
 	}
 
 	for index, testCase := range testCases {
 		// Act
-		actual := gameMap.computeTurnsLeft(testCase.SourceID, testCase.TargetID)
+		actual := computeTurnsLeft(testCase.rawDistance)
 
 		// Assert
 		if actual != testCase.Expected {

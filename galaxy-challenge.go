@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"github.com/magleff/galaxy-challenge/dto"
 	"github.com/magleff/galaxy-challenge/game"
-	"github.com/magleff/galaxy-challenge/ias/paimon"
+	"github.com/magleff/galaxy-challenge/ias/leraje"
 	"log"
 	"net/http"
 )

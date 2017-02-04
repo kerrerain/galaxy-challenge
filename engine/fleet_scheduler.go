@@ -22,7 +22,7 @@ func (f FleetScheduler) TurnFleetsForPlanet(turn int, planetID uint16) []dto.Sta
 
 func (f *FleetScheduler) AddFleets(fleets []dto.StatusFleet) {
 	for _, fleet := range fleets {
-		AddFleet(fleet)
+		f.AddFleet(fleet)
 	}
 }
 
