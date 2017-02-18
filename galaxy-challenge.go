@@ -29,7 +29,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("An error occured while analysing the current state of the game:", err)
 	} else {
-		log.Println("Sending back data for turn", status.Config.Turn)
+		log.Println("Sending back data for turn", status.Config.Turn, move)
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -47,7 +47,7 @@ func main() {
 
 func makeMove(status dto.Status) (dto.Move, error) {
 	updateGame(status)
-	return paimon.Run(G), nil
+	return leraje.Run(G), nil
 }
 
 func updateGame(status dto.Status) {

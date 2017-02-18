@@ -9,7 +9,7 @@ func TestComputeFrontLimit(t *testing.T) {
 	testCases := []struct {
 		Planets         []*ResultPlanet
 		MaxFrontPlanets int
-		Expected        float64
+		Expected        uint16
 	}{
 		{
 			[]*ResultPlanet{},

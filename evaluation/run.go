@@ -5,8 +5,11 @@ import (
 )
 
 func Run(timeline engine.Timeline) Result {
+	planets := createResultPlanets(timeline)
+
 	result := Result{
-		Planets: createResultPlanets(timeline),
+		Planets:    planets,
+		FrontLimit: ComputeFrontLimit(planets, 5),
 	}
 	return result
 }

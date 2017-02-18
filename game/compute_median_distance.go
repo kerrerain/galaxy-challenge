@@ -1,19 +1,13 @@
 package game
 
 import (
-	"github.com/magleff/galaxy-challenge/common"
-	"github.com/magleff/galaxy-challenge/dto"
 	"math"
 )
 
-// Computes the median distance between a planet and enemy planets
+// Computes the median distance between a planet and other planets
 //
-func (m Map) ComputeMedianDistance(planetID uint16) Distance {
-	otherPlanets := dto.FilterStatusPlanets(m.Planets, func(planet dto.StatusPlanet) bool {
-		return planet.OwnerID != common.PLAYER_OWNER_ID && planet.OwnerID != common.NEUTRAL_OWNER_ID
-	})
-
-	if len(otherPlanets) == 0 {
+func (m Map) ComputeMedianDistance(planetID uint16, otherPlanetsID []uint16) Distance {
+	if len(otherPlanetsID) == 0 {
 		return Distance{
 			Raw:   0.0,
 			Turns: 0,
@@ -22,11 +16,11 @@ func (m Map) ComputeMedianDistance(planetID uint16) Distance {
 
 	medianRaw := 0.0
 	medianTurns := uint16(0)
-	length := uint16(len(otherPlanets))
+	length := uint16(len(otherPlanetsID))
 
-	for _, planet := range otherPlanets {
-		medianRaw += m.DistanceMap[planetID][planet.ID].Raw
-		medianTurns += m.DistanceMap[planetID][planet.ID].Turns
+	for _, otherPlanetID := range otherPlanetsID {
+		medianRaw += m.DistanceMap[planetID][otherPlanetID].Raw
+		medianTurns += m.DistanceMap[planetID][otherPlanetID].Turns
 	}
 
 	return Distance{

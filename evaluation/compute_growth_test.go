@@ -24,6 +24,17 @@ func TestComputeGrowth(t *testing.T) {
 			},
 			25,
 		},
+		// Case 2: the enemy sends fleets
+		{
+			&engine.PlanetTimeline{
+				Turns: []dto.StatusPlanet{
+					{ID: 1, OwnerID: common.NEUTRAL_OWNER_ID, Units: 25, MaxUnits: 200},
+					{ID: 1, OwnerID: 2, Units: 25, MaxUnits: 200},
+					{ID: 1, OwnerID: 2, Units: 75, MaxUnits: 200},
+				},
+			},
+			-50,
+		},
 	}
 
 	for index, testCase := range testCases {
