@@ -24,9 +24,9 @@ func createResultPlanets(timeline engine.Timeline) []*ResultPlanet {
 }
 
 func ComputeMedianDistanceToEnemy(gameMap *game.Map, source *engine.PlanetTimeline,
-	targets []*engine.PlanetTimeline) uint16 {
+	targets []*engine.PlanetTimeline) int16 {
 
-	enemiesID := make([]uint16, 0)
+	enemiesID := make([]int16, 0)
 
 	for _, target := range targets {
 		lastTurn := target.Turns[len(target.Turns)-1]
@@ -39,9 +39,9 @@ func ComputeMedianDistanceToEnemy(gameMap *game.Map, source *engine.PlanetTimeli
 }
 
 func ComputeMedianDistanceToPlayer(gameMap *game.Map, source *engine.PlanetTimeline,
-	targets []*engine.PlanetTimeline) uint16 {
+	targets []*engine.PlanetTimeline) int16 {
 
-	playersID := make([]uint16, 0)
+	playersID := make([]int16, 0)
 
 	for _, target := range targets {
 		lastTurn := target.Turns[len(target.Turns)-1]

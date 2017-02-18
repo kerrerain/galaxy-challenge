@@ -25,7 +25,7 @@ func TestNextTurn(t *testing.T) {
 		Input           *PlanetTimeline
 		InputFleets     []dto.StatusFleet
 		ExpectedUnits   int16
-		ExpectedOwnerID uint16
+		ExpectedOwnerID int16
 	}{
 		// CASE 1: normal growth
 		{

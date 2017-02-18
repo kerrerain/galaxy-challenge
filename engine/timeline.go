@@ -29,7 +29,7 @@ func (t *Timeline) NextTurn() {
 	}
 }
 
-func (t *Timeline) ScheduleMoveForNextTurn(playerID uint16, move dto.Move) {
+func (t *Timeline) ScheduleMoveForNextTurn(playerID int16, move dto.Move) {
 	for _, fleet := range move.Fleets {
 		t.FleetScheduler.AddFleet(t.GameMap.MapMoveFleet(playerID, fleet))
 	}

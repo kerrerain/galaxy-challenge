@@ -4,7 +4,7 @@ import (
 	"github.com/magleff/galaxy-challenge/dto"
 )
 
-func (m Map) MapMoveFleet(playerID uint16, moveFleet dto.MoveFleet) dto.StatusFleet {
+func (m Map) MapMoveFleet(playerID int16, moveFleet dto.MoveFleet) dto.StatusFleet {
 	return dto.StatusFleet{
 		OwnerID:  playerID,
 		SourceID: moveFleet.SourceID,

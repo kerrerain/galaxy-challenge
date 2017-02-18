@@ -9,7 +9,7 @@ func TestSendOrder(t *testing.T) {
 	// Arrange
 	testCases := []struct {
 		Input    Order
-		Expected map[uint16]int16
+		Expected map[int16]int16
 	}{
 		// Case 1: a single source planet
 		{
@@ -18,7 +18,7 @@ func TestSendOrder(t *testing.T) {
 				SourceID: 1,
 				Units:    5,
 			},
-			map[uint16]int16{1: 5},
+			map[int16]int16{1: 5},
 		},
 		// Case 2: not enough units to send (a fleet should be >= 3 units)
 		{
@@ -27,7 +27,7 @@ func TestSendOrder(t *testing.T) {
 				SourceID: 1,
 				Units:    2,
 			},
-			map[uint16]int16{1: 10},
+			map[int16]int16{1: 10},
 		},
 		// Case 3: not enough units available.
 		// Send possible units but keep at least 1 unit
@@ -37,14 +37,14 @@ func TestSendOrder(t *testing.T) {
 				SourceID: 1,
 				Units:    15,
 			},
-			map[uint16]int16{1: 1},
+			map[int16]int16{1: 1},
 		},
 	}
 
 	for index, testCase := range testCases {
 		// Arrange
 		commander := &Commander{
-			AvailableUnitsOnPlanet: map[uint16]int16{1: 10},
+			AvailableUnitsOnPlanet: map[int16]int16{1: 10},
 		}
 
 		// Act

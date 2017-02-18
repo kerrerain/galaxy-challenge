@@ -7,7 +7,7 @@ import (
 type Map struct {
 	Planets     []dto.StatusPlanet
 	Fleets      []dto.StatusFleet
-	DistanceMap map[uint16]map[uint16]Distance
-	Turn        uint16
+	DistanceMap map[int16]map[int16]Distance
+	Turn        int16
 	Initialized bool
 }

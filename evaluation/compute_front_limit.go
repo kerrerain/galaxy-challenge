@@ -4,7 +4,7 @@ import (
 	"sort"
 )
 
-func ComputeFrontLimit(planets []*ResultPlanet, maxFrontPlanets int) uint16 {
+func ComputeFrontLimit(planets []*ResultPlanet, maxFrontPlanets int) int16 {
 	sort.Sort(ByLowestDistanceToEnemy(planets))
 
 	length := len(planets)

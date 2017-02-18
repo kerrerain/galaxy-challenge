@@ -16,7 +16,7 @@ func CreateFleetScheduler(fleets []dto.StatusFleet) *FleetScheduler {
 }
 
 // Returns the fleets landing on a planet at a specific turn (0, 1, etc).
-func (f FleetScheduler) TurnFleetsForPlanet(turn int, planetID uint16) []dto.StatusFleet {
+func (f FleetScheduler) TurnFleetsForPlanet(turn int, planetID int16) []dto.StatusFleet {
 	return f.FleetArrivals[computeKey(turn, int(planetID))]
 }
 

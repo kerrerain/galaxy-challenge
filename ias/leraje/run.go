@@ -31,7 +31,7 @@ func Run(gameMap *game.Map) dto.Move {
 				commander.SendOrder(command.Order{
 					SourceID: planet.ID,
 					TargetID: target.ID,
-					Units:    uint16(target.Origin.Units) + 1,
+					Units:    int16(target.Origin.Units) + 1,
 				})
 			}
 		}

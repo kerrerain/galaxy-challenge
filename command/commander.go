@@ -6,7 +6,7 @@ import (
 )
 
 type Commander struct {
-	AvailableUnitsOnPlanet map[uint16]int16
+	AvailableUnitsOnPlanet map[int16]int16
 	Fleets                 []*dto.MoveFleet
 }
 
@@ -17,8 +17,8 @@ func CreateCommander(gameMap *game.Map) *Commander {
 	}
 }
 
-func initAvailableUnitsOnPlanet(gameMap *game.Map) map[uint16]int16 {
-	unitsMap := make(map[uint16]int16)
+func initAvailableUnitsOnPlanet(gameMap *game.Map) map[int16]int16 {
+	unitsMap := make(map[int16]int16)
 
 	for _, planet := range gameMap.Planets {
 		unitsMap[planet.ID] = planet.Units

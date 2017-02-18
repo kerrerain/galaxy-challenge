@@ -42,7 +42,7 @@ func TestComputeMedianDistance(t *testing.T) {
 		gameMap.InitDistanceMap()
 
 		// Act
-		actual := gameMap.ComputeMedianDistance(1, []uint16{3, 4})
+		actual := gameMap.ComputeMedianDistance(1, []int16{3, 4})
 
 		// Assert
 		if !reflect.DeepEqual(testCase.Expected, actual) {

@@ -5,12 +5,12 @@ import (
 )
 
 type ResultPlanet struct {
-	ID               uint16
+	ID               int16
 	Origin           *dto.StatusPlanet
 	Loss             int
 	Growth           int16
-	DistanceToEnemy  uint16
-	DistanceToPlayer uint16
+	DistanceToEnemy  int16
+	DistanceToPlayer int16
 }
 
 type ByLowestDistanceToEnemy []*ResultPlanet

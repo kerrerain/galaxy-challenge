@@ -6,7 +6,7 @@ import (
 )
 
 type PlanetTimeline struct {
-	ID     uint16
+	ID     int16
 	Turns  []dto.StatusPlanet
 	Origin *dto.StatusPlanet
 }

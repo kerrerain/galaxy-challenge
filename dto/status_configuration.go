@@ -1,6 +1,6 @@
 package dto
 
 type StatusConfiguration struct {
-	Turn    uint16 `json:"turn,omitempty"`
-	MaxTurn uint16 `json:"maxTurn,omitempty"`
+	Turn    int16 `json:"turn,omitempty"`
+	MaxTurn int16 `json:"maxTurn,omitempty"`
 }

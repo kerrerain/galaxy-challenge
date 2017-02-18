@@ -23,8 +23,8 @@ func TestInitDistanceMap(t *testing.T) {
 	// Arrange
 	var testCases = []struct {
 		Input             []dto.StatusPlanet
-		InputSourcePlanet uint16
-		InputTargetPlanet uint16
+		InputSourcePlanet int16
+		InputTargetPlanet int16
 		Expected          Distance
 	}{
 		{
@@ -73,7 +73,7 @@ func TestComputeTurnsLeft(t *testing.T) {
 
 	testCases := []struct {
 		rawDistance float64
-		Expected    uint16
+		Expected    int16
 	}{
 		{40, 2},
 		{45, 2},

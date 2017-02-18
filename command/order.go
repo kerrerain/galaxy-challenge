@@ -1,7 +1,7 @@
 package command
 
 type Order struct {
-	TargetID uint16
-	SourceID uint16
-	Units    uint16
+	TargetID int16
+	SourceID int16
+	Units    int16
 }

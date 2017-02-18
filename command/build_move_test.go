@@ -29,6 +29,7 @@ func TestBuildMove(t *testing.T) {
 				Fleets: []dto.MoveFleet{
 					{SourceID: 1, TargetID: 2, Units: 10},
 				},
+				Terraformings: make([]dto.MoveTerraforming, 0),
 			},
 		},
 	}
@@ -36,7 +37,7 @@ func TestBuildMove(t *testing.T) {
 	for index, testCase := range testCases {
 		// Arrange
 		commander := &Commander{
-			AvailableUnitsOnPlanet: map[uint16]int16{1: 50},
+			AvailableUnitsOnPlanet: map[int16]int16{1: 50},
 		}
 
 		// Act
