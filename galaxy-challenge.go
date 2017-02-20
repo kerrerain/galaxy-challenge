@@ -1,15 +1,19 @@
 package main
 
 import (
+	"bufio"
 	"encoding/json"
 	"github.com/magleff/galaxy-challenge/dto"
 	"github.com/magleff/galaxy-challenge/game"
 	"github.com/magleff/galaxy-challenge/ias/leraje"
 	"log"
 	"net/http"
+	"os"
+	"strconv"
 )
 
 var G *game.Map
+var TurnsLog map[int16]*dto.TurnLog
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	var (
@@ -34,12 +38,42 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(move)
+
+	logToFile(status, move)
+}
+
+func logToFile(status dto.Status, move dto.Move) {
+	gameID := status.Config.ID
+
+	f, err := os.Create("log_" + strconv.Itoa(int(gameID)) + ".json")
+	defer f.Close()
+
+	if err != nil {
+		log.Panic(err)
+	}
+
+	if TurnsLog[gameID] == nil {
+		TurnsLog[gameID] = &dto.TurnLog{
+			Data: make([]interface{}, 0),
+		}
+	} else {
+		TurnsLog[gameID].Data = append(TurnsLog[gameID].Data, []interface{}{
+			status,
+			move,
+		})
+	}
+
+	w := bufio.NewWriter(f)
+	json.NewEncoder(w).Encode(TurnsLog[gameID].Data)
+
+	w.Flush()
 }
 
 func main() {
 	log.Println("Running the server on port 3000")
 
 	G = &game.Map{}
+	TurnsLog = make(map[int16]*dto.TurnLog)
 
 	http.HandleFunc("/", handler)
 	http.ListenAndServe(":3000", nil)
