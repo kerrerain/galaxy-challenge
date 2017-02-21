@@ -45,7 +45,11 @@ func handler(w http.ResponseWriter, r *http.Request) {
 func logToFile(status dto.Status, move dto.Move) {
 	gameID := status.Config.ID
 
-	f, err := os.Create("log_" + strconv.Itoa(int(gameID)) + ".json")
+	if _, err := os.Stat("logs"); os.IsNotExist(err) {
+		os.Mkdir("logs", os.ModePerm)
+	}
+
+	f, err := os.Create("logs/log_" + strconv.Itoa(int(gameID)) + ".json")
 	defer f.Close()
 
 	if err != nil {
@@ -56,12 +60,12 @@ func logToFile(status dto.Status, move dto.Move) {
 		TurnsLog[gameID] = &dto.TurnLog{
 			Data: make([]interface{}, 0),
 		}
-	} else {
-		TurnsLog[gameID].Data = append(TurnsLog[gameID].Data, []interface{}{
-			status,
-			move,
-		})
 	}
+
+	TurnsLog[gameID].Data = append(TurnsLog[gameID].Data, []interface{}{
+		status,
+		move,
+	})
 
 	w := bufio.NewWriter(f)
 	json.NewEncoder(w).Encode(TurnsLog[gameID].Data)

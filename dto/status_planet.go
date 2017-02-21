@@ -1,14 +1,14 @@
 package dto
 
 type StatusPlanet struct {
-	ID       int16   `json:"id,omitempty"`
-	X        float64 `json:"x,omitempty"`
-	Y        float64 `json:"y,omitempty"`
-	OwnerID  int16   `json:"owner,omitempty"`
-	Units    int16   `json:"units,omitempty"`
-	MaxUnits int16   `json:"mu,omitempty"`
-	Growth   int16   `json:"gr,omitempty"`
-	Category string  `json:"class,omitempty"`
+	ID       int16   `json:"id"`
+	X        float64 `json:"x"`
+	Y        float64 `json:"y"`
+	OwnerID  int16   `json:"owner"`
+	Units    int16   `json:"units"`
+	MaxUnits int16   `json:"mu"`
+	Growth   int16   `json:"gr"`
+	Category string  `json:"class"`
 }
 
 func (p StatusPlanet) Copy() StatusPlanet {
