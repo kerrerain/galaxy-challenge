@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"time"
 )
 
 var G *game.Map
@@ -28,11 +29,14 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		log.Println("Message received for turn", status.Config.Turn)
 	}
 
+	start := time.Now()
 	move, err = makeMove(status)
+	elapsed := time.Since(start)
 
 	if err != nil {
 		log.Println("An error occured while analysing the current state of the game:", err)
 	} else {
+		log.Printf("Took %s", elapsed)
 		log.Println("Sending back data for turn", status.Config.Turn, move)
 	}
 

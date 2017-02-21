@@ -12,8 +12,11 @@ import (
 
 // Spirit of strength and humility.
 //
-// An IA quickly simulating the future of the game, in order to avoid dumb moves.
-// Hopefully better than Paimon.
+// An IA quickly simulating the future of the game,
+// in order to avoid dumb moves.
+//
+// Better used at the beginning of a game to quickly
+// take the neutral planets.
 //
 func Run(gameMap *game.Map) dto.Move {
 	commander := command.CreateCommander(gameMap)
