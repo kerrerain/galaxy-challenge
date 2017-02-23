@@ -49,3 +49,14 @@ func FilterEnemyPlanets(toFilter []StatusPlanet) []StatusPlanet {
 		return planet.OwnerID != common.PLAYER_OWNER_ID
 	})
 }
+
+func GetByID(toFilter []StatusPlanet, id int16) StatusPlanet {
+	filtered := FilterStatusPlanets(toFilter, func(planet StatusPlanet) bool {
+		return planet.ID == id
+	})
+	if len(filtered) == 1 {
+		return filtered[0]
+	} else {
+		return StatusPlanet{}
+	}
+}

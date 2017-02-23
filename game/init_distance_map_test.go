@@ -34,8 +34,9 @@ func TestInitDistanceMap(t *testing.T) {
 				{ID: 3, X: 5, Y: 0},
 			},
 			1, 3, Distance{
-				Raw:   5,
-				Turns: 0,
+				TargetID: 3,
+				Raw:      5,
+				Turns:    0,
 			},
 		},
 	}

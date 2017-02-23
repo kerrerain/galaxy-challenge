@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"github.com/magleff/galaxy-challenge/dto"
 	"github.com/magleff/galaxy-challenge/game"
-	"github.com/magleff/galaxy-challenge/ias/leraje"
+	"github.com/magleff/galaxy-challenge/ias/amon"
 	"github.com/magleff/galaxy-challenge/ias/phenex"
 	"log"
 	"net/http"
@@ -93,8 +93,8 @@ func makeMove(status dto.Status) (dto.Move, error) {
 
 	var move dto.Move
 
-	if status.Config.Turn < 50 {
-		move = leraje.Run(G)
+	if status.Config.Turn < 250 {
+		move = amon.Run(G)
 	} else {
 		move = phenex.Run(G)
 	}
