@@ -6,6 +6,7 @@ import (
 	"github.com/magleff/galaxy-challenge/dto"
 	"github.com/magleff/galaxy-challenge/game"
 	"github.com/magleff/galaxy-challenge/ias/leraje"
+	"github.com/magleff/galaxy-challenge/ias/phenex"
 	"log"
 	"net/http"
 	"os"
@@ -89,7 +90,16 @@ func main() {
 
 func makeMove(status dto.Status) (dto.Move, error) {
 	updateGame(status)
-	return leraje.Run(G), nil
+
+	var move dto.Move
+
+	if status.Config.Turn < 1 {
+		move = leraje.Run(G)
+	} else {
+		move = phenex.Run(G)
+	}
+
+	return move, nil
 }
 
 func updateGame(status dto.Status) {

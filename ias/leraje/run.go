@@ -21,7 +21,7 @@ import (
 func Run(gameMap *game.Map) dto.Move {
 	commander := command.CreateCommander(gameMap)
 	timeline := runBasicTimeline(gameMap)
-	result := evaluation.Run(timeline)
+	result := evaluation.Run(timeline, evaluation.Configuration{})
 	sort.Sort(evaluation.ByLowestDistanceToPlayer(result.Planets))
 
 	ownPlanets := dto.FilterStatusPlanets(gameMap.Planets, func(planet dto.StatusPlanet) bool {

@@ -6,18 +6,26 @@ import (
 )
 
 type Timeline struct {
-	GameMap         *game.Map
-	PlanetTimelines []*PlanetTimeline
-	FleetScheduler  *FleetScheduler
-	Turn            int
+	GameMap            *game.Map
+	PlanetTimelines    []*PlanetTimeline
+	PlanetTimelinesMap map[int16]*PlanetTimeline
+	FleetScheduler     *FleetScheduler
+	Turn               int
 }
 
 func CreateTimeline(gameMap *game.Map) Timeline {
-	return Timeline{
-		GameMap:         gameMap,
-		PlanetTimelines: CreatePlanetTimelines(gameMap.Planets),
-		FleetScheduler:  CreateFleetScheduler(gameMap.Fleets),
+	timeline := Timeline{
+		GameMap:            gameMap,
+		PlanetTimelines:    CreatePlanetTimelines(gameMap.Planets),
+		PlanetTimelinesMap: make(map[int16]*PlanetTimeline),
+		FleetScheduler:     CreateFleetScheduler(gameMap.Fleets),
 	}
+
+	for _, planetTimeline := range timeline.PlanetTimelines {
+		timeline.PlanetTimelinesMap[planetTimeline.ID] = planetTimeline
+	}
+
+	return timeline
 }
 
 func (t *Timeline) NextTurn() {

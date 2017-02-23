@@ -22,10 +22,12 @@ func TestCreatePlanetTimeline(t *testing.T) {
 func TestNextTurn(t *testing.T) {
 	// Arrange
 	var testCases = []struct {
-		Input           *PlanetTimeline
-		InputFleets     []dto.StatusFleet
-		ExpectedUnits   int16
-		ExpectedOwnerID int16
+		Input                       *PlanetTimeline
+		InputFleets                 []dto.StatusFleet
+		ExpectedUnits               int16
+		ExpectedOwnerID             int16
+		ExpectedTotalUnitsSent      int16
+		ExpectedTotalEnemyUnitsSent int16
 	}{
 		// CASE 1: normal growth
 		{
@@ -44,6 +46,8 @@ func TestNextTurn(t *testing.T) {
 			[]dto.StatusFleet{},
 			35,
 			common.PLAYER_OWNER_ID,
+			0,
+			0,
 		},
 		// CASE 2: not growing because the planet is neutral
 		{
@@ -62,6 +66,8 @@ func TestNextTurn(t *testing.T) {
 			[]dto.StatusFleet{},
 			30,
 			common.NEUTRAL_OWNER_ID,
+			0,
+			0,
 		},
 		// CASE 3: not growing because the growth rate is 0
 		{
@@ -80,6 +86,8 @@ func TestNextTurn(t *testing.T) {
 			[]dto.StatusFleet{},
 			30,
 			common.PLAYER_OWNER_ID,
+			0,
+			0,
 		},
 		// CASE 4: not growing more than MaxUnits
 		{
@@ -98,6 +106,8 @@ func TestNextTurn(t *testing.T) {
 			[]dto.StatusFleet{},
 			200,
 			common.PLAYER_OWNER_ID,
+			0,
+			0,
 		},
 		// CASE 5: the player attacks a neutral planet.
 		// The units do not grow.
@@ -116,10 +126,12 @@ func TestNextTurn(t *testing.T) {
 				},
 			},
 			[]dto.StatusFleet{
-				{OwnerID: 1, Units: 30},
+				{OwnerID: common.PLAYER_OWNER_ID, Units: 30},
 			},
 			0,
 			common.NEUTRAL_OWNER_ID,
+			30,
+			0,
 		},
 		// CASE 6: the player attacks an enemy planet (OwnerID > 1).
 		// The units grow before the fleets attacks.
@@ -142,6 +154,8 @@ func TestNextTurn(t *testing.T) {
 			},
 			4,
 			2,
+			31,
+			0,
 		},
 		// CASE 7: the player earns an enemy planet (OwnerID > 1).
 		{
@@ -162,6 +176,8 @@ func TestNextTurn(t *testing.T) {
 			},
 			25,
 			common.PLAYER_OWNER_ID,
+			60,
+			0,
 		},
 	}
 
@@ -172,15 +188,27 @@ func TestNextTurn(t *testing.T) {
 		// Assert
 		units := testCase.Input.Turns[1].Units
 		ownerID := testCase.Input.Turns[1].OwnerID
+		totalUnitsSent := testCase.Input.TotalUnitsSent
+		totalEnemyUnitsSent := testCase.Input.TotalEnemyUnitsSent
 
 		if testCase.ExpectedUnits != units {
-			t.Errorf("TestInitDistanceMap(%d): expected units %s, actual %s", index,
+			t.Errorf("TestNextTurn(%d): expected units %s, actual %s", index,
 				testCase.ExpectedUnits, units)
 		}
 
 		if testCase.ExpectedOwnerID != ownerID {
-			t.Errorf("TestInitDistanceMap(%d): expected owner %s, actual %s", index,
+			t.Errorf("TestNextTurn(%d): expected owner %s, actual %s", index,
 				testCase.ExpectedOwnerID, ownerID)
+		}
+
+		if testCase.ExpectedTotalUnitsSent != totalUnitsSent {
+			t.Errorf("TestNextTurn(%d): expected totalUnitsSent %s, actual %s", index,
+				testCase.ExpectedTotalUnitsSent, totalUnitsSent)
+		}
+
+		if testCase.ExpectedTotalEnemyUnitsSent != totalEnemyUnitsSent {
+			t.Errorf("TestNextTurn(%d): expected totalEnemyUnitsSent %s, actual %s", index,
+				testCase.ExpectedTotalUnitsSent, totalEnemyUnitsSent)
 		}
 	}
 }

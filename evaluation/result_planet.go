@@ -28,3 +28,13 @@ func (a ByLowestDistanceToPlayer) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
 func (a ByLowestDistanceToPlayer) Less(i, j int) bool {
 	return a[i].DistanceToPlayer < a[j].DistanceToPlayer
 }
+
+func FilterResultPlanets(toFilter []*ResultPlanet, predicate func(planet *ResultPlanet) bool) []*ResultPlanet {
+	filtered := make([]*ResultPlanet, 0)
+	for _, planet := range toFilter {
+		if predicate(planet) {
+			filtered = append(filtered, planet)
+		}
+	}
+	return filtered
+}

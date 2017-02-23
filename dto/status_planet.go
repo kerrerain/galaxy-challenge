@@ -1,5 +1,9 @@
 package dto
 
+import (
+	"github.com/magleff/galaxy-challenge/common"
+)
+
 type StatusPlanet struct {
 	ID       int16   `json:"id"`
 	X        float64 `json:"x"`
@@ -32,4 +36,16 @@ func FilterStatusPlanets(toFilter []StatusPlanet, predicate func(StatusPlanet) b
 		}
 	}
 	return filtered
+}
+
+func FilterOwnPlanets(toFilter []StatusPlanet) []StatusPlanet {
+	return FilterStatusPlanets(toFilter, func(planet StatusPlanet) bool {
+		return planet.OwnerID == common.PLAYER_OWNER_ID
+	})
+}
+
+func FilterEnemyPlanets(toFilter []StatusPlanet) []StatusPlanet {
+	return FilterStatusPlanets(toFilter, func(planet StatusPlanet) bool {
+		return planet.OwnerID != common.PLAYER_OWNER_ID
+	})
 }

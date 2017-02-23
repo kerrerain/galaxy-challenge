@@ -12,6 +12,13 @@ func TestComputeFrontLimit(t *testing.T) {
 		Expected        int16
 	}{
 		{
+			[]*ResultPlanet{
+				{DistanceToEnemy: 3},
+			},
+			0,
+			0,
+		},
+		{
 			[]*ResultPlanet{},
 			1,
 			0,

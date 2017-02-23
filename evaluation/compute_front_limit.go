@@ -9,7 +9,7 @@ func ComputeFrontLimit(planets []*ResultPlanet, maxFrontPlanets int) int16 {
 
 	length := len(planets)
 
-	if length == 0 {
+	if length == 0 || maxFrontPlanets == 0 {
 		return 0
 	} else if maxFrontPlanets >= length {
 		return planets[length-1].DistanceToEnemy

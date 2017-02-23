@@ -1,6 +1,8 @@
 package evaluation
 
 type Result struct {
-	Planets    []*ResultPlanet
-	FrontLimit int16
+	Planets        []*ResultPlanet
+	FrontPlanets   []*ResultPlanet
+	SupportPlanets []*ResultPlanet
+	FrontLimit     int16
 }
