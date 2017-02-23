@@ -24,20 +24,22 @@ func computeFullPlanetInvasionCost(gameMap *game.Map, targetID int16, sourceIDs 
 	timeline := engine.CreateTimeline(gameMap)
 
 	for i := 0; i < common.SIMULATION_HORIZON; i++ {
-		currentTurn := timeline.PlanetTimelinesMap[targetID].CurrentTurn()
+		//currentTurn := timeline.PlanetTimelinesMap[targetID].CurrentTurn()
 
-		if currentTurn.OwnerID != common.PLAYER_OWNER_ID && currentTurn.Units < 20 {
-			commander := command.CreateCommanderFromTimeline(timeline)
-			commander.AllOutAttackOnPlanet(targetID, sourceIDs)
+		/*		if currentTurn.OwnerID != common.PLAYER_OWNER_ID {
 
-			enemyCommander := command.CreateCommanderFromTimeline(timeline)
-			enemyCommander.AllOutAttackOnPlanet(targetID, enemySourceIDs)
 
-			timeline.ScheduleMoveForNextTurn(common.PLAYER_OWNER_ID, commander.BuildMove())
-			timeline.ScheduleMoveForNextTurn(2, enemyCommander.BuildMove())
-			timeline.NextTurn()
-		}
+				}*/
+		commander := command.CreateCommanderFromTimeline(timeline)
+		commander.AllOutAttackOnPlanet(targetID, sourceIDs)
+
+		enemyCommander := command.CreateCommanderFromTimeline(timeline)
+		enemyCommander.AllOutAttackOnPlanet(targetID, enemySourceIDs)
+
+		timeline.ScheduleMoveForNextTurn(common.PLAYER_OWNER_ID, commander.BuildMove())
+		timeline.ScheduleMoveForNextTurn(2, enemyCommander.BuildMove())
+		timeline.NextTurn()
 	}
 
-	return timeline.PlanetTimelinesMap[targetID].TotalUnitsSent
+	return timeline.PlanetTimelinesMap[targetID].TotalUnitsSent - timeline.PlanetTimelinesMap[targetID].TotalEnemyUnitsSent
 }

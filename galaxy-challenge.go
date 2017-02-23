@@ -93,7 +93,7 @@ func makeMove(status dto.Status) (dto.Move, error) {
 
 	var move dto.Move
 
-	if status.Config.Turn < 1 {
+	if status.Config.Turn < 50 {
 		move = leraje.Run(G)
 	} else {
 		move = phenex.Run(G)
