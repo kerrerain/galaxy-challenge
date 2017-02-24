@@ -85,7 +85,7 @@ func main() {
 	TurnsLog = make(map[int16]*dto.TurnLog)
 
 	http.HandleFunc("/", handler)
-	http.ListenAndServe(":3000", nil)
+	http.ListenAndServe(":80", nil)
 }
 
 func makeMove(status dto.Status) (dto.Move, error) {

@@ -7,7 +7,7 @@ import (
 )
 
 func ComputeTaken(gameMap *game.Map, targetID int16) bool {
-	timeline := engine.CreateTimeline(gameMap)
+	timeline := engine.CreateTimelineForPlanets(gameMap, []int16{targetID})
 
 	for i := 0; i < common.SIMULATION_HORIZON; i++ {
 		timeline.NextTurn()
