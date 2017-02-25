@@ -1,8 +1,10 @@
 package engine
 
 import (
+	"github.com/magleff/galaxy-challenge/common"
 	"github.com/magleff/galaxy-challenge/dto"
 	"github.com/magleff/galaxy-challenge/game"
+	"log"
 )
 
 type Timeline struct {
@@ -69,8 +71,15 @@ func (t *Timeline) ScheduleMoveForNextTurn(playerID int16, move dto.Move) {
 	for _, fleet := range move.Fleets {
 		// Remove units from the source of the fleet
 		if t.PlanetTimelinesMap[fleet.SourceID] != nil {
-			currentPlanetTurn := t.PlanetTimelinesMap[fleet.SourceID].CurrentTurn()
-			currentPlanetTurn.Units -= fleet.Units
+			planet := t.PlanetTimelinesMap[fleet.SourceID].CurrentTurn().Copy()
+			planet.Units -= fleet.Units
+
+			t.PlanetTimelinesMap[fleet.SourceID].Turns[t.Turn] = planet
+
+			if common.DEBUG_MODE {
+				log.Printf("Sending %d units from planet %d, %d units remaining", fleet.Units, fleet.SourceID,
+					planet.Units)
+			}
 		}
 
 		t.FleetScheduler.AddFleet(t.GameMap.MapMoveFleet(playerID, fleet))

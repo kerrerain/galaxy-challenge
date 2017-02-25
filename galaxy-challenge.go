@@ -79,7 +79,7 @@ func logToFile(status dto.Status, move dto.Move) {
 }
 
 func main() {
-	log.Println("Running the server on port 3000")
+	log.Println("Running the server on port 80")
 
 	G = &game.Map{}
 	TurnsLog = make(map[int16]*dto.TurnLog)

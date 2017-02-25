@@ -19,18 +19,15 @@ func Run(gameMap *game.Map) dto.Move {
 		nearestPlanets := gameMap.NearestPlanetsMap[sourcePlanet.ID]
 		targetPlanet := chooseTarget(gameMap, nearestPlanets)
 
-		if targetPlanet.ID != 0 {
+		if targetPlanet.ID != 0 && simulation.ComputeKept(gameMap, sourcePlanet.ID, targetPlanet.Units) {
 			commander.SendOrder(command.Order{
 				SourceID: sourcePlanet.ID,
 				TargetID: targetPlanet.ID,
 				Units:    int16(targetPlanet.Units) + 1,
 			})
-		}
-
-		// Should not send the order if that's suicide
-		if !simulation.ComputeKept(gameMap, sourcePlanet.ID, commander.BuildMove()) {
-			commander.Reset()
-			log.Printf("Keeping units on planet %d to avoid invasion.", sourcePlanet.ID)
+		} else {
+			log.Printf(`Keeping units on planet %d to avoid losing it,
+				or because there are no more targets on the map`, sourcePlanet.ID)
 		}
 	}
 
