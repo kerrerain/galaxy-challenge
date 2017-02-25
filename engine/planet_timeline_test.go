@@ -19,15 +19,19 @@ func TestCreatePlanetTimeline(t *testing.T) {
 	}
 }
 
+type ExpectedResultNextTurn struct {
+	Units               int16
+	OwnerID             int16
+	TotalUnitsSent      int16
+	TotalEnemyUnitsSent int16
+}
+
 func TestNextTurn(t *testing.T) {
 	// Arrange
 	var testCases = []struct {
-		Input                       *PlanetTimeline
-		InputFleets                 []dto.StatusFleet
-		ExpectedUnits               int16
-		ExpectedOwnerID             int16
-		ExpectedTotalUnitsSent      int16
-		ExpectedTotalEnemyUnitsSent int16
+		Input       *PlanetTimeline
+		InputFleets []dto.StatusFleet
+		Expected    ExpectedResultNextTurn
 	}{
 		// CASE 1: normal growth
 		{
@@ -44,10 +48,12 @@ func TestNextTurn(t *testing.T) {
 				},
 			},
 			[]dto.StatusFleet{},
-			35,
-			common.PLAYER_OWNER_ID,
-			0,
-			0,
+			ExpectedResultNextTurn{
+				Units:               35,
+				OwnerID:             common.PLAYER_OWNER_ID,
+				TotalUnitsSent:      0,
+				TotalEnemyUnitsSent: 0,
+			},
 		},
 		// CASE 2: not growing because the planet is neutral
 		{
@@ -64,10 +70,12 @@ func TestNextTurn(t *testing.T) {
 				},
 			},
 			[]dto.StatusFleet{},
-			30,
-			common.NEUTRAL_OWNER_ID,
-			0,
-			0,
+			ExpectedResultNextTurn{
+				Units:               30,
+				OwnerID:             common.NEUTRAL_OWNER_ID,
+				TotalUnitsSent:      0,
+				TotalEnemyUnitsSent: 0,
+			},
 		},
 		// CASE 3: not growing because the growth rate is 0
 		{
@@ -84,10 +92,12 @@ func TestNextTurn(t *testing.T) {
 				},
 			},
 			[]dto.StatusFleet{},
-			30,
-			common.PLAYER_OWNER_ID,
-			0,
-			0,
+			ExpectedResultNextTurn{
+				Units:               30,
+				OwnerID:             common.PLAYER_OWNER_ID,
+				TotalUnitsSent:      0,
+				TotalEnemyUnitsSent: 0,
+			},
 		},
 		// CASE 4: not growing more than MaxUnits
 		{
@@ -104,10 +114,12 @@ func TestNextTurn(t *testing.T) {
 				},
 			},
 			[]dto.StatusFleet{},
-			200,
-			common.PLAYER_OWNER_ID,
-			0,
-			0,
+			ExpectedResultNextTurn{
+				Units:               200,
+				OwnerID:             common.PLAYER_OWNER_ID,
+				TotalUnitsSent:      0,
+				TotalEnemyUnitsSent: 0,
+			},
 		},
 		// CASE 5: the player attacks a neutral planet.
 		// The units do not grow.
@@ -128,10 +140,12 @@ func TestNextTurn(t *testing.T) {
 			[]dto.StatusFleet{
 				{OwnerID: common.PLAYER_OWNER_ID, Units: 30},
 			},
-			0,
-			common.NEUTRAL_OWNER_ID,
-			30,
-			0,
+			ExpectedResultNextTurn{
+				Units:               0,
+				OwnerID:             common.NEUTRAL_OWNER_ID,
+				TotalUnitsSent:      30,
+				TotalEnemyUnitsSent: 0,
+			},
 		},
 		// CASE 6: the player attacks an enemy planet (OwnerID > 1).
 		// The units grow before the fleets attacks.
@@ -152,10 +166,12 @@ func TestNextTurn(t *testing.T) {
 			[]dto.StatusFleet{
 				{OwnerID: 1, Units: 31},
 			},
-			4,
-			2,
-			31,
-			0,
+			ExpectedResultNextTurn{
+				Units:               4,
+				OwnerID:             2,
+				TotalUnitsSent:      31,
+				TotalEnemyUnitsSent: 0,
+			},
 		},
 		// CASE 7: the player earns an enemy planet (OwnerID > 1).
 		{
@@ -174,10 +190,60 @@ func TestNextTurn(t *testing.T) {
 			[]dto.StatusFleet{
 				{OwnerID: 1, Units: 60},
 			},
-			25,
-			common.PLAYER_OWNER_ID,
-			60,
-			0,
+			ExpectedResultNextTurn{
+				Units:               25,
+				OwnerID:             common.PLAYER_OWNER_ID,
+				TotalUnitsSent:      60,
+				TotalEnemyUnitsSent: 0,
+			},
+		},
+		// CASE 8: the player sends units to its own planet
+		{
+			&PlanetTimeline{
+				Turns: []dto.StatusPlanet{
+					{
+						ID:       1,
+						OwnerID:  common.PLAYER_OWNER_ID,
+						Category: "M",
+						Growth:   5,
+						MaxUnits: 200,
+						Units:    30,
+					},
+				},
+			},
+			[]dto.StatusFleet{
+				{OwnerID: 1, Units: 60},
+			},
+			ExpectedResultNextTurn{
+				Units:               95,
+				OwnerID:             common.PLAYER_OWNER_ID,
+				TotalUnitsSent:      60,
+				TotalEnemyUnitsSent: 0,
+			},
+		},
+		// CASE 9: the enemy takes the planet
+		{
+			&PlanetTimeline{
+				Turns: []dto.StatusPlanet{
+					{
+						ID:       1,
+						OwnerID:  common.PLAYER_OWNER_ID,
+						Category: "M",
+						Growth:   5,
+						MaxUnits: 200,
+						Units:    30,
+					},
+				},
+			},
+			[]dto.StatusFleet{
+				{OwnerID: 2, Units: 60},
+			},
+			ExpectedResultNextTurn{
+				Units:               25,
+				OwnerID:             2,
+				TotalUnitsSent:      0,
+				TotalEnemyUnitsSent: 60,
+			},
 		},
 	}
 
@@ -191,24 +257,27 @@ func TestNextTurn(t *testing.T) {
 		totalUnitsSent := testCase.Input.TotalUnitsSent
 		totalEnemyUnitsSent := testCase.Input.TotalEnemyUnitsSent
 
-		if testCase.ExpectedUnits != units {
+		// I do that because the index of the comments starts at 1 '-__-
+		index += 1
+
+		if testCase.Expected.Units != units {
 			t.Errorf("TestNextTurn(%d): expected units %s, actual %s", index,
-				testCase.ExpectedUnits, units)
+				testCase.Expected.Units, units)
 		}
 
-		if testCase.ExpectedOwnerID != ownerID {
+		if testCase.Expected.OwnerID != ownerID {
 			t.Errorf("TestNextTurn(%d): expected owner %s, actual %s", index,
-				testCase.ExpectedOwnerID, ownerID)
+				testCase.Expected.OwnerID, ownerID)
 		}
 
-		if testCase.ExpectedTotalUnitsSent != totalUnitsSent {
+		if testCase.Expected.TotalUnitsSent != totalUnitsSent {
 			t.Errorf("TestNextTurn(%d): expected totalUnitsSent %s, actual %s", index,
-				testCase.ExpectedTotalUnitsSent, totalUnitsSent)
+				testCase.Expected.TotalUnitsSent, totalUnitsSent)
 		}
 
-		if testCase.ExpectedTotalEnemyUnitsSent != totalEnemyUnitsSent {
+		if testCase.Expected.TotalEnemyUnitsSent != totalEnemyUnitsSent {
 			t.Errorf("TestNextTurn(%d): expected totalEnemyUnitsSent %s, actual %s", index,
-				testCase.ExpectedTotalUnitsSent, totalEnemyUnitsSent)
+				testCase.Expected.TotalEnemyUnitsSent, totalEnemyUnitsSent)
 		}
 	}
 }

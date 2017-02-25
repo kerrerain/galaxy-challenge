@@ -42,7 +42,7 @@ func initFleets(fleets []dto.StatusFleet) map[string][]dto.StatusFleet {
 }
 
 func addFleetArrival(fleetArrivals map[string][]dto.StatusFleet, fleet dto.StatusFleet) {
-	key := computeKey(int(fleet.Left), int(fleet.TargetID))
+	key := computeKey(int(fleet.Left+1), int(fleet.TargetID))
 
 	if fleetArrivals[key] == nil {
 		fleetArrivals[key] = make([]dto.StatusFleet, 0)

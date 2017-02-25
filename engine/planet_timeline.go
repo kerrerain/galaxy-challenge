@@ -3,6 +3,7 @@ package engine
 import (
 	"github.com/magleff/galaxy-challenge/common"
 	"github.com/magleff/galaxy-challenge/dto"
+	"log"
 )
 
 type PlanetTimeline struct {
@@ -47,18 +48,39 @@ func (p PlanetTimeline) CurrentTurn() dto.StatusPlanet {
 }
 
 func applyGrowth(planet *dto.StatusPlanet) {
+	formerUnits := planet.Units
+
 	if planet.OwnerID != common.NEUTRAL_OWNER_ID {
-		planet.Units = common.Min(planet.MaxUnits, planet.Units+planet.Growth)
+		planet.Units = common.Min(planet.MaxUnits, formerUnits+planet.Growth)
+	}
+
+	if common.DEBUG_MODE && planet.Units != formerUnits {
+		log.Printf("Growth on planet %d: from %d to %d", planet.ID, formerUnits, planet.Units)
 	}
 }
 
 func applyFleets(planet *dto.StatusPlanet, fleets []dto.StatusFleet) {
 	for _, fleet := range fleets {
-		planet.Units = planet.Units - fleet.Units
+
+		if common.DEBUG_MODE {
+			log.Printf("Fleet arrival on planet %d: player %d sent %d units", planet.ID, fleet.OwnerID, fleet.Units)
+		}
+
+		if planet.OwnerID == fleet.OwnerID {
+			planet.Units += fleet.Units
+		} else {
+			planet.Units -= fleet.Units
+		}
+
+		previousOwnerID := planet.OwnerID
 
 		if planet.Units < 0 {
 			planet.OwnerID = fleet.OwnerID // The other player has earned the planet
 			planet.Units = -1 * planet.Units
+
+			if common.DEBUG_MODE {
+				log.Printf("Ownership has changed: from player %d to %d, %d units", previousOwnerID, fleet.OwnerID, planet.Units)
+			}
 		}
 	}
 }

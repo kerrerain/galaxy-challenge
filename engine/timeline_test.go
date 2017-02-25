@@ -4,6 +4,8 @@ import (
 	"github.com/magleff/galaxy-challenge/common"
 	"github.com/magleff/galaxy-challenge/dto"
 	"github.com/magleff/galaxy-challenge/game"
+	"log"
+	"reflect"
 	"testing"
 )
 
@@ -29,26 +31,52 @@ func TestCreateTimeline(t *testing.T) {
 
 func TestTimelineNextTurn(t *testing.T) {
 	// Arrange
-	gameMap := &game.Map{
-		Planets: []dto.StatusPlanet{
-			{ID: 1, OwnerID: common.PLAYER_OWNER_ID, Units: 50, MaxUnits: 200, Growth: 5, Category: "M"},
-			{ID: 2, OwnerID: common.NEUTRAL_OWNER_ID, Units: 50, MaxUnits: 200, Growth: 5, Category: "M"},
-			{ID: 3, OwnerID: 2, Units: 50, MaxUnits: 200, Growth: 5, Category: "M"},
+	testCases := []struct {
+		GameMap        *game.Map
+		ExpectedPlanet dto.StatusPlanet
+	}{
+		{
+			&game.Map{
+				Planets: []dto.StatusPlanet{
+					{ID: 1, OwnerID: common.NEUTRAL_OWNER_ID, Units: 50, MaxUnits: 200, Growth: 5, Category: "M"},
+				},
+				Fleets: []dto.StatusFleet{
+					{OwnerID: common.PLAYER_OWNER_ID, TargetID: 1, Units: 60, Left: 0},
+				},
+			},
+			dto.StatusPlanet{ID: 1, OwnerID: common.PLAYER_OWNER_ID, Units: 10, MaxUnits: 200, Growth: 5, Category: "M"},
 		},
-		Fleets: []dto.StatusFleet{
-			{},
+		{
+			&game.Map{
+				Planets: []dto.StatusPlanet{
+					{ID: 1, OwnerID: common.PLAYER_OWNER_ID, Units: 50, MaxUnits: 200, Growth: 5, Category: "M"},
+				},
+				Fleets: []dto.StatusFleet{
+					{OwnerID: 2, TargetID: 1, Units: 60, Left: 0},
+				},
+			},
+			dto.StatusPlanet{ID: 1, OwnerID: 2, Units: 5, MaxUnits: 200, Growth: 5, Category: "M"},
 		},
 	}
 
-	timeline := CreateTimeline(gameMap)
+	for index, testCase := range testCases {
+		if common.DEBUG_MODE {
+			log.Printf("Case %d", index)
+		}
 
-	// Act
-	timeline.NextTurn()
-	timeline.NextTurn()
-	timeline.NextTurn()
+		timeline := CreateTimeline(testCase.GameMap)
 
-	// Assert
-	if timeline.Turn != 3 {
-		t.Error("TestTimelineNextTurn: should increase the turns.")
+		// Act
+		timeline.NextTurn()
+
+		// Assert
+		if timeline.Turn != 1 {
+			t.Error("TestTimelineNextTurn: should increase the turns.")
+		}
+
+		if !reflect.DeepEqual(testCase.ExpectedPlanet, timeline.PlanetTimelinesMap[1].CurrentTurn()) {
+			t.Errorf("TestTimelineNextTurn(%d): expected %v, was %v", index, testCase.ExpectedPlanet,
+				timeline.PlanetTimelinesMap[2].CurrentTurn())
+		}
 	}
 }

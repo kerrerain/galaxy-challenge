@@ -9,6 +9,8 @@ import (
 	"log"
 )
 
+// Spirit of politeness and austerity.
+//
 func Run(gameMap *game.Map) dto.Move {
 	commander := command.CreateCommander(gameMap)
 	ownPlanets := dto.FilterOwnPlanets(gameMap.Planets)
@@ -25,7 +27,11 @@ func Run(gameMap *game.Map) dto.Move {
 			})
 		}
 
-		log.Printf("Nearest planet to take from %d: %d", sourcePlanet.ID, targetPlanet.ID)
+		// Should not send the order if that's suicide
+		if !simulation.ComputeKept(gameMap, sourcePlanet.ID, commander.BuildMove()) {
+			commander.Reset()
+			log.Printf("Keeping units on planet %d to avoid invasion.", sourcePlanet.ID)
+		}
 	}
 
 	return commander.BuildMove()

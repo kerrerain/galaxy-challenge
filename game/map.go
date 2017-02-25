@@ -5,6 +5,7 @@ import (
 )
 
 type Map struct {
+	ID                int16
 	Planets           []dto.StatusPlanet
 	Fleets            []dto.StatusFleet
 	DistanceMap       map[int16]map[int16]Distance

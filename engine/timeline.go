@@ -67,6 +67,12 @@ func (t *Timeline) NextTurn() {
 
 func (t *Timeline) ScheduleMoveForNextTurn(playerID int16, move dto.Move) {
 	for _, fleet := range move.Fleets {
+		// Remove units from the source of the fleet
+		if t.PlanetTimelinesMap[fleet.SourceID] != nil {
+			currentPlanetTurn := t.PlanetTimelinesMap[fleet.SourceID].CurrentTurn()
+			currentPlanetTurn.Units -= fleet.Units
+		}
+
 		t.FleetScheduler.AddFleet(t.GameMap.MapMoveFleet(playerID, fleet))
 	}
 }
