@@ -1,5 +1,9 @@
 package command
 
+import (
+	"github.com/magleff/galaxy-challenge/common"
+)
+
 func unitsToSend(available int16, attack int16) int16 {
 	toSend := attack
 
@@ -7,7 +11,7 @@ func unitsToSend(available int16, attack int16) int16 {
 		toSend = available - 1
 	}
 
-	if toSend < 3 {
+	if toSend < common.MIN_FLEET_UNITS {
 		toSend = 0
 	}
 

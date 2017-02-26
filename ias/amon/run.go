@@ -19,15 +19,23 @@ func Run(gameMap *game.Map) dto.Move {
 		nearestPlanets := gameMap.NearestPlanetsMap[sourcePlanet.ID]
 		targetPlanet := chooseTarget(gameMap, nearestPlanets)
 
-		if targetPlanet.ID != 0 && simulation.ComputeKept(gameMap, sourcePlanet.ID, targetPlanet.Units) {
-			commander.SendOrder(command.Order{
+		log.Printf("Planet %d targets %d", sourcePlanet.ID, targetPlanet.ID)
+
+		if targetPlanet.ID != 0 {
+			order := command.Order{
 				SourceID: sourcePlanet.ID,
 				TargetID: targetPlanet.ID,
-				Units:    int16(targetPlanet.Units) + 1,
-			})
+				Units:    simulation.ComputeNeededUnitsForInvasion(gameMap, sourcePlanet.ID, targetPlanet.ID),
+			}
+
+			if simulation.ComputeKept(gameMap, sourcePlanet.ID, order) {
+				commander.SendOrder(order)
+			} else {
+				log.Printf("Keeping units on planet %d to avoid losing it", sourcePlanet.ID)
+			}
 		} else {
-			log.Printf(`Keeping units on planet %d to avoid losing it,
-				or because there are no more targets on the map`, sourcePlanet.ID)
+			log.Printf(`Keeping units on planet %d because there are no
+				more targets on the map`, sourcePlanet.ID)
 		}
 	}
 

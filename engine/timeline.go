@@ -61,6 +61,10 @@ func doCreateTimeline(gameMap *game.Map, planets []dto.StatusPlanet, fleets []dt
 func (t *Timeline) NextTurn() {
 	t.Turn = t.Turn + 1
 
+	if common.DEBUG_MODE {
+		log.Printf("Moving to next turn: %d", t.Turn)
+	}
+
 	for _, planet := range t.PlanetTimelines {
 		fleets := t.FleetScheduler.TurnFleetsForPlanet(t.Turn, planet.ID)
 		planet.NextTurn(fleets)
