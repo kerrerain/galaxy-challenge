@@ -47,6 +47,14 @@ func (p PlanetTimeline) CurrentTurn() dto.StatusPlanet {
 	return p.Turns[len(p.Turns)-1]
 }
 
+func (p PlanetTimeline) SetCurrentTurn(planet dto.StatusPlanet) {
+	p.Turns[len(p.Turns)-1] = planet
+}
+
+func (p PlanetTimeline) PreviousTurn() dto.StatusPlanet {
+	return p.Turns[len(p.Turns)-2]
+}
+
 func applyGrowth(planet *dto.StatusPlanet) {
 	formerUnits := planet.Units
 

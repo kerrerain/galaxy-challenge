@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"github.com/magleff/galaxy-challenge/dto"
 	"github.com/magleff/galaxy-challenge/game"
-	"github.com/magleff/galaxy-challenge/ias/amon"
+	"github.com/magleff/galaxy-challenge/ias/agares"
 	"log"
 	"net/http"
 	"os"
@@ -53,7 +53,7 @@ func logToFile(status dto.Status, move dto.Move) {
 		os.Mkdir("logs", os.ModePerm)
 	}
 
-	f, err := os.Create("logs/amon_" + strconv.Itoa(int(gameID)) + ".json")
+	f, err := os.Create("logs/agares_" + strconv.Itoa(int(gameID)) + ".json")
 	defer f.Close()
 
 	if err != nil {
@@ -92,7 +92,7 @@ func makeMove(status dto.Status) (dto.Move, error) {
 
 	var move dto.Move
 
-	move = amon.Run(G)
+	move = agares.Run(G)
 
 	return move, nil
 }
