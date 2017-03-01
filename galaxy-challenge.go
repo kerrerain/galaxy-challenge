@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-var G *game.Map
+var Games map[int16]*game.Map
 var TurnsLog map[int16]*dto.TurnLog
 
 func handler(w http.ResponseWriter, r *http.Request) {
@@ -80,7 +80,7 @@ func logToFile(status dto.Status, move dto.Move) {
 func main() {
 	log.Println("Running the server on port 80")
 
-	G = &game.Map{}
+	Games = make(map[int16]*game.Map)
 	TurnsLog = make(map[int16]*dto.TurnLog)
 
 	http.HandleFunc("/", handler)
@@ -92,19 +92,19 @@ func makeMove(status dto.Status) (dto.Move, error) {
 
 	var move dto.Move
 
-	move = agares.Run(G)
+	move = agares.Run(Games[status.Config.ID])
 
 	return move, nil
 }
 
 func updateGame(status dto.Status) {
-	if G.ID == status.Config.ID {
-		G.Update(status)
+	if Games[status.Config.ID] != nil {
+		Games[status.Config.ID].Update(status)
 	} else {
-		G = &game.Map{
+		Games[status.Config.ID] = &game.Map{
 			ID: status.Config.ID,
 		}
-		G.Update(status)
-		G.InitDistanceMap()
+		Games[status.Config.ID].Update(status)
+		Games[status.Config.ID].InitDistanceMap()
 	}
 }
