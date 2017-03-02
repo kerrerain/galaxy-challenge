@@ -3,9 +3,12 @@ package main
 import (
 	"bufio"
 	"encoding/json"
+	"flag"
 	"github.com/magleff/galaxy-challenge/dto"
 	"github.com/magleff/galaxy-challenge/game"
 	"github.com/magleff/galaxy-challenge/ias/agares"
+	"github.com/magleff/galaxy-challenge/ias/amon"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -15,6 +18,10 @@ import (
 
 var Games map[int16]*game.Map
 var TurnsLog map[int16]*dto.TurnLog
+
+const FIRST_PLAYER_AI = agares.NAME
+const SECOND_PLAYER_AI = amon.NAME
+const SOLO_MODE_MAP = "byzantium"
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	var (
@@ -78,13 +85,49 @@ func logToFile(status dto.Status, move dto.Move) {
 }
 
 func main() {
-	log.Println("Running the server on port 80")
+	soloModeFlag := flag.Bool("s", false, "Solo mode game")
+	flag.Parse()
 
 	Games = make(map[int16]*game.Map)
 	TurnsLog = make(map[int16]*dto.TurnLog)
 
-	http.HandleFunc("/", handler)
-	http.ListenAndServe(":80", nil)
+	if *soloModeFlag {
+		soloModeHandler()
+	} else {
+		log.Println("Running the server on port 80")
+
+		http.HandleFunc("/", classicModeHandler)
+		http.ListenAndServe(":80", nil)
+	}
+}
+
+func soloModeHandler() {
+	log.Println("Playing in solo mode")
+
+	var (
+		err     error
+		planets []dto.StatusPlanet
+	)
+
+	file, e := ioutil.ReadFile("./maps/" + SOLO_MODE_MAP + ".json")
+	if e != nil {
+		log.Printf("File error: %v\n", e)
+		os.Exit(1)
+	}
+
+	if err = json.Unmarshal(file, &planets); err != nil {
+		log.Println("An error occured while decoding json:", err)
+	} else {
+		log.Printf("Loaded map: %s", SOLO_MODE_MAP)
+	}
+
+	for i := 0; i < 200; i++ {
+
+	}
+}
+
+func classicModeHandler(w http.ResponseWriter, r *http.Request) {
+	handler(w, r)
 }
 
 func makeMove(status dto.Status) (dto.Move, error) {

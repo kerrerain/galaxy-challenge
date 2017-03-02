@@ -41,7 +41,7 @@ func TestTimelineNextTurn(t *testing.T) {
 					{ID: 1, OwnerID: common.NEUTRAL_OWNER_ID, Units: 50, MaxUnits: 200, Growth: 5, Category: "M"},
 				},
 				Fleets: []dto.StatusFleet{
-					{OwnerID: common.PLAYER_OWNER_ID, TargetID: 1, Units: 60, Left: 0},
+					{OwnerID: common.PLAYER_OWNER_ID, TargetID: 1, Units: 60, Left: 1},
 				},
 			},
 			dto.StatusPlanet{ID: 1, OwnerID: common.PLAYER_OWNER_ID, Units: 10, MaxUnits: 200, Growth: 5, Category: "M"},
@@ -52,7 +52,7 @@ func TestTimelineNextTurn(t *testing.T) {
 					{ID: 1, OwnerID: common.PLAYER_OWNER_ID, Units: 50, MaxUnits: 200, Growth: 5, Category: "M"},
 				},
 				Fleets: []dto.StatusFleet{
-					{OwnerID: 2, TargetID: 1, Units: 60, Left: 0},
+					{OwnerID: 2, TargetID: 1, Units: 60, Left: 1},
 				},
 			},
 			dto.StatusPlanet{ID: 1, OwnerID: 2, Units: 5, MaxUnits: 200, Growth: 5, Category: "M"},
@@ -76,7 +76,7 @@ func TestTimelineNextTurn(t *testing.T) {
 
 		if !reflect.DeepEqual(testCase.ExpectedPlanet, timeline.PlanetTimelinesMap[1].CurrentTurn()) {
 			t.Errorf("TestTimelineNextTurn(%d): expected %v, was %v", index, testCase.ExpectedPlanet,
-				timeline.PlanetTimelinesMap[2].CurrentTurn())
+				timeline.PlanetTimelinesMap[1].CurrentTurn())
 		}
 	}
 }

@@ -89,3 +89,20 @@ func (t *Timeline) ScheduleMoveForNextTurn(playerID int16, move dto.Move) {
 		t.FleetScheduler.AddFleet(t.GameMap.MapMoveFleet(playerID, fleet))
 	}
 }
+
+func (t Timeline) Status() dto.Status {
+	return dto.Status{
+		Fleets:  t.FleetScheduler.Fleets(),
+		Planets: t.Planets(),
+	}
+}
+
+func (t Timeline) Planets() []dto.StatusPlanet {
+	planets := make([]dto.StatusPlanet, len(t.PlanetTimelines))
+
+	for i, planetTimeline := range t.PlanetTimelines {
+		planets[i] = planetTimeline.CurrentTurn()
+	}
+
+	return planets
+}

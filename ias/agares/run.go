@@ -9,6 +9,8 @@ import (
 	"log"
 )
 
+const NAME = "AGARES"
+
 // Spirit of Fortitude and Creation.
 //
 // The evolution of Amon.

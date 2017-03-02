@@ -31,6 +31,14 @@ func (f *FleetScheduler) AddFleet(fleet dto.StatusFleet) {
 	addFleetArrival(f.FleetArrivals, fleet)
 }
 
+func (f FleetScheduler) Fleets() []dto.StatusFleet {
+	fleets := make([]dto.StatusFleet, 0)
+	for _, v := range f.FleetArrivals {
+		fleets = append(fleets, v...)
+	}
+	return fleets
+}
+
 func initFleets(fleets []dto.StatusFleet) map[string][]dto.StatusFleet {
 	fleetArrivals := make(map[string][]dto.StatusFleet)
 
