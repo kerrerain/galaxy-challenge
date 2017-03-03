@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"flag"
 	"github.com/magleff/galaxy-challenge/dto"
+	"github.com/magleff/galaxy-challenge/engine"
 	"github.com/magleff/galaxy-challenge/game"
 	"github.com/magleff/galaxy-challenge/ias/agares"
 	"github.com/magleff/galaxy-challenge/ias/amon"
@@ -21,7 +22,7 @@ var TurnsLog map[int16]*dto.TurnLog
 
 const FIRST_PLAYER_AI = agares.NAME
 const SECOND_PLAYER_AI = amon.NAME
-const SOLO_MODE_MAP = "byzantium"
+const SOLO_MODE_MAP = "criticorum"
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	var (
@@ -37,15 +38,11 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	start := time.Now()
-	move, err = makeMove(status)
+	move = makeMove(status, 1, FIRST_PLAYER_AI)
 	elapsed := time.Since(start)
 
-	if err != nil {
-		log.Println("An error occured while analysing the current state of the game:", err)
-	} else {
-		log.Printf("Took %s", elapsed)
-		log.Println("Sending back data for turn", status.Config.Turn, move)
-	}
+	log.Printf("Took %s", elapsed)
+	log.Println("Sending back data for turn", status.Config.Turn, move)
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(move)
@@ -121,8 +118,26 @@ func soloModeHandler() {
 		log.Printf("Loaded map: %s", SOLO_MODE_MAP)
 	}
 
-	for i := 0; i < 200; i++ {
+	gameMap := &game.Map{}
+	gameMap.Update(dto.Status{
+		Planets: planets,
+	})
+	gameMap.InitDistanceMap()
 
+	timeline := engine.CreateTimeline(gameMap)
+
+	for i := 1; i <= 200; i++ {
+		log.Printf("Turn %d", i)
+		status := timeline.Status()
+
+		firstPlayerMove := makeMove(status, 1, FIRST_PLAYER_AI)
+		timeline.ScheduleMoveForNextTurn(1, firstPlayerMove)
+		logToFile(status, firstPlayerMove)
+
+		secondPlayerMove := makeMove(status, 2, SECOND_PLAYER_AI)
+		timeline.ScheduleMoveForNextTurn(2, secondPlayerMove)
+
+		timeline.NextTurn()
 	}
 }
 
@@ -130,14 +145,19 @@ func classicModeHandler(w http.ResponseWriter, r *http.Request) {
 	handler(w, r)
 }
 
-func makeMove(status dto.Status) (dto.Move, error) {
+func makeMove(status dto.Status, playerID int16, aiName string) dto.Move {
 	updateGame(status)
 
 	var move dto.Move
 
-	move = agares.Run(Games[status.Config.ID])
+	switch aiName {
+	case agares.NAME:
+		move = agares.Run(Games[status.Config.ID], playerID)
+	default:
+		move = amon.Run(Games[status.Config.ID], playerID)
+	}
 
-	return move, nil
+	return move
 }
 
 func updateGame(status dto.Status) {

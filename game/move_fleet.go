@@ -10,6 +10,7 @@ func (m Map) MapMoveFleet(playerID int16, moveFleet dto.MoveFleet) dto.StatusFle
 		SourceID: moveFleet.SourceID,
 		TargetID: moveFleet.TargetID,
 		Units:    moveFleet.Units,
+		Turns:    m.DistanceMap[moveFleet.SourceID][moveFleet.TargetID].Turns,
 		Left:     m.DistanceMap[moveFleet.SourceID][moveFleet.TargetID].Turns,
 	}
 }

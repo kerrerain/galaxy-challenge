@@ -16,7 +16,7 @@ func TestCreateFleetScheduler(t *testing.T) {
 	}
 
 	// Act
-	fleetScheduler := CreateFleetScheduler(fleets)
+	fleetScheduler := CreateFleetScheduler(fleets, 0)
 
 	// Assert
 	if len(fleetScheduler.TurnFleetsForPlanet(4, 1)) != 2 {
@@ -27,15 +27,20 @@ func TestCreateFleetScheduler(t *testing.T) {
 func TestFleets(t *testing.T) {
 	// Arrange
 	fleets := []dto.StatusFleet{
-		{OwnerID: 1, Left: 3, TargetID: 1, Units: 50},
+		{OwnerID: 1, Turns: 3, Left: 3, TargetID: 1, Units: 50},
+		{OwnerID: 1, Turns: 3, Left: 1, TargetID: 1, Units: 50},
 	}
-	fleetScheduler := CreateFleetScheduler(fleets)
+	fleetScheduler := CreateFleetScheduler(fleets, 0)
 
 	// Act
-	actual := fleetScheduler.Fleets()
+	actual := fleetScheduler.Fleets(2)
 
 	// Assert
-	if !reflect.DeepEqual(fleets, actual) {
-		t.Errorf("TestFleets: expected %v, was %v", fleets, actual)
+	expected := []dto.StatusFleet{
+		{OwnerID: 1, Turns: 3, Left: 1, TargetID: 1, Units: 50},
+	}
+
+	if !reflect.DeepEqual(expected, actual) {
+		t.Errorf("TestFleets: expected %v, was %v", expected, actual)
 	}
 }

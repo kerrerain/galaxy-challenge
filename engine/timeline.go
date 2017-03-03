@@ -48,7 +48,7 @@ func doCreateTimeline(gameMap *game.Map, planets []dto.StatusPlanet, fleets []dt
 		GameMap:            gameMap,
 		PlanetTimelines:    CreatePlanetTimelines(planets),
 		PlanetTimelinesMap: make(map[int16]*PlanetTimeline),
-		FleetScheduler:     CreateFleetScheduler(fleets),
+		FleetScheduler:     CreateFleetScheduler(fleets, 0),
 	}
 
 	for _, planetTimeline := range timeline.PlanetTimelines {
@@ -86,14 +86,18 @@ func (t *Timeline) ScheduleMoveForNextTurn(playerID int16, move dto.Move) {
 			}
 		}
 
-		t.FleetScheduler.AddFleet(t.GameMap.MapMoveFleet(playerID, fleet))
+		t.FleetScheduler.AddFleet(t.GameMap.MapMoveFleet(playerID, fleet), t.Turn)
 	}
 }
 
 func (t Timeline) Status() dto.Status {
 	return dto.Status{
-		Fleets:  t.FleetScheduler.Fleets(),
+		Fleets:  t.FleetScheduler.Fleets(t.Turn),
 		Planets: t.Planets(),
+		Config: dto.StatusConfiguration{
+			ID:   0,
+			Turn: int16(t.Turn),
+		},
 	}
 }
 

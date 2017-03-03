@@ -2,7 +2,6 @@ package agares
 
 import (
 	"github.com/magleff/galaxy-challenge/command"
-	"github.com/magleff/galaxy-challenge/common"
 	"github.com/magleff/galaxy-challenge/dto"
 	"github.com/magleff/galaxy-challenge/game"
 	"github.com/magleff/galaxy-challenge/simulation"
@@ -15,16 +14,16 @@ const NAME = "AGARES"
 //
 // The evolution of Amon.
 //
-func Run(gameMap *game.Map) dto.Move {
+func Run(gameMap *game.Map, playerID int16) dto.Move {
 	commander := command.CreateCommander(gameMap)
-	ownPlanets := dto.FilterOwnPlanets(gameMap.Planets)
+	ownPlanets := dto.FilterPlanetsByPlayerID(gameMap.Planets, playerID)
 
 	for _, sourcePlanet := range ownPlanets {
 		needs := simulation.ComputeNeeds(gameMap, sourcePlanet.ID)
 		log.Printf("Needs for planet %d: %v", sourcePlanet.ID, needs)
 
 		nearestPlanets := gameMap.NearestPlanetsMap[sourcePlanet.ID]
-		targetPlanet := chooseTarget(gameMap, nearestPlanets)
+		targetPlanet := chooseTarget(gameMap, nearestPlanets, playerID)
 
 		log.Printf("Planet %d targets %d", sourcePlanet.ID, targetPlanet.ID)
 
@@ -47,15 +46,15 @@ func Run(gameMap *game.Map) dto.Move {
 	return commander.BuildMove()
 }
 
-func chooseTarget(gameMap *game.Map, nearestPlanets []int16) dto.StatusPlanet {
+func chooseTarget(gameMap *game.Map, nearestPlanets []int16, playerID int16) dto.StatusPlanet {
 	target := dto.StatusPlanet{
 		ID: 0,
 	}
 
 	for _, targetID := range nearestPlanets {
-		if target.ID == 0 && !simulation.ComputeTaken(gameMap, targetID) {
+		if target.ID == 0 && !simulation.ComputeTaken(gameMap, targetID, playerID) {
 			planet := dto.GetByID(gameMap.Planets, targetID)
-			if planet.OwnerID != common.PLAYER_OWNER_ID {
+			if planet.OwnerID != playerID {
 				target = planet
 			}
 		}

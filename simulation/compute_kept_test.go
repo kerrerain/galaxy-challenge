@@ -23,8 +23,8 @@ func TestComputeKept(t *testing.T) {
 					{ID: 1, OwnerID: 1, Units: 10, Growth: 2, MaxUnits: 200},
 				},
 				Fleets: []dto.StatusFleet{
-					{OwnerID: 2, Units: 3, TargetID: 1, Left: 0},
-					{OwnerID: 2, Units: 5, TargetID: 1, Left: 0},
+					{OwnerID: 2, Units: 3, TargetID: 1, Left: 1},
+					{OwnerID: 2, Units: 5, TargetID: 1, Left: 1},
 				},
 			},
 			1,
@@ -41,8 +41,8 @@ func TestComputeKept(t *testing.T) {
 					{ID: 1, OwnerID: 1, Units: 10, Growth: 2, MaxUnits: 200},
 				},
 				Fleets: []dto.StatusFleet{
-					{OwnerID: 2, Units: 3, TargetID: 1, Left: 0},
-					{OwnerID: 2, Units: 5, TargetID: 1, Left: 0},
+					{OwnerID: 2, Units: 3, TargetID: 1, Left: 1},
+					{OwnerID: 2, Units: 5, TargetID: 1, Left: 1},
 				},
 			},
 			1,
@@ -64,7 +64,7 @@ func TestComputeKept(t *testing.T) {
 		gameMap.InitDistanceMap()
 
 		// Act
-		actual := ComputeKept(gameMap, testCase.SourceID, testCase.Order)
+		actual := ComputeKept(gameMap, testCase.SourceID, testCase.Order, 1)
 
 		// Assert
 		if actual != testCase.Expected {

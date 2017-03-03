@@ -9,6 +9,17 @@ type StatusFleet struct {
 	Left     int16 `json:"left"`
 }
 
+func (f StatusFleet) Copy() StatusFleet {
+	return StatusFleet{
+		OwnerID:  f.OwnerID,
+		Units:    f.Units,
+		SourceID: f.SourceID,
+		TargetID: f.TargetID,
+		Turns:    f.Turns,
+		Left:     f.Left,
+	}
+}
+
 func FilterStatusFleets(toFilter []StatusFleet, predicate func(StatusFleet) bool) []StatusFleet {
 	filtered := make([]StatusFleet, 0)
 	for _, fleet := range toFilter {

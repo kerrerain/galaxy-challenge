@@ -50,6 +50,12 @@ func FilterEnemyPlanets(toFilter []StatusPlanet) []StatusPlanet {
 	})
 }
 
+func FilterPlanetsByPlayerID(toFilter []StatusPlanet, playerID int16) []StatusPlanet {
+	return FilterStatusPlanets(toFilter, func(planet StatusPlanet) bool {
+		return planet.OwnerID == playerID
+	})
+}
+
 func GetByID(toFilter []StatusPlanet, id int16) StatusPlanet {
 	filtered := FilterStatusPlanets(toFilter, func(planet StatusPlanet) bool {
 		return planet.ID == id

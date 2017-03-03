@@ -7,7 +7,7 @@ import (
 	"github.com/magleff/galaxy-challenge/game"
 )
 
-func ComputeKept(gameMap *game.Map, sourceID int16, order command.Order) bool {
+func ComputeKept(gameMap *game.Map, sourceID int16, order command.Order, playerID int16) bool {
 	timeline := engine.CreateTimelineForPlanets(gameMap, []int16{sourceID})
 
 	commander := command.CreateCommanderFromTimeline(timeline)
@@ -19,5 +19,5 @@ func ComputeKept(gameMap *game.Map, sourceID int16, order command.Order) bool {
 		timeline.NextTurn()
 	}
 
-	return timeline.PlanetTimelinesMap[sourceID].CurrentTurn().OwnerID == common.PLAYER_OWNER_ID
+	return timeline.PlanetTimelinesMap[sourceID].CurrentTurn().OwnerID == playerID
 }
