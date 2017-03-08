@@ -9,6 +9,7 @@ import (
 	"github.com/magleff/galaxy-challenge/game"
 	"github.com/magleff/galaxy-challenge/ias/agares"
 	"github.com/magleff/galaxy-challenge/ias/amon"
+	"github.com/magleff/galaxy-challenge/ias/vepar"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -20,9 +21,9 @@ import (
 var Games map[int16]*game.Map
 var TurnsLog map[int16]*dto.TurnLog
 
-const FIRST_PLAYER_AI = agares.NAME
+const FIRST_PLAYER_AI = vepar.NAME
 const SECOND_PLAYER_AI = amon.NAME
-const SOLO_MODE_MAP = "criticorum"
+const SOLO_MODE_MAP = "byzantium"
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	var (
@@ -57,7 +58,7 @@ func logToFile(status dto.Status, move dto.Move) {
 		os.Mkdir("logs", os.ModePerm)
 	}
 
-	f, err := os.Create("logs/agares_" + strconv.Itoa(int(gameID)) + ".json")
+	f, err := os.Create("logs/vepar_" + strconv.Itoa(int(gameID)) + ".json")
 	defer f.Close()
 
 	if err != nil {
@@ -153,6 +154,8 @@ func makeMove(status dto.Status, playerID int16, aiName string) dto.Move {
 	switch aiName {
 	case agares.NAME:
 		move = agares.Run(Games[status.Config.ID], playerID)
+	case vepar.NAME:
+		move = vepar.Run(Games[status.Config.ID], playerID)
 	default:
 		move = amon.Run(Games[status.Config.ID], playerID)
 	}

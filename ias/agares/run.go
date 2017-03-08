@@ -2,6 +2,7 @@ package agares
 
 import (
 	"github.com/magleff/galaxy-challenge/command"
+	"github.com/magleff/galaxy-challenge/common"
 	"github.com/magleff/galaxy-challenge/dto"
 	"github.com/magleff/galaxy-challenge/game"
 	"github.com/magleff/galaxy-challenge/simulation"
@@ -54,7 +55,9 @@ func chooseTarget(gameMap *game.Map, nearestPlanets []int16, playerID int16) dto
 	for _, targetID := range nearestPlanets {
 		if target.ID == 0 && !simulation.ComputeTaken(gameMap, targetID, playerID) {
 			planet := dto.GetByID(gameMap.Planets, targetID)
-			if planet.OwnerID != playerID {
+			if planet.OwnerID != playerID &&
+				(planet.Growth > 0 || planet.OwnerID != common.NEUTRAL_OWNER_ID) {
+
 				target = planet
 			}
 		}
